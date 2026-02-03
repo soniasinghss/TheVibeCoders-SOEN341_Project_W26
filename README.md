@@ -57,7 +57,7 @@ The goal of this project is to:
 ---
 
 ## Technologies Used  
-- Frontend: JavaScript  
+- Frontend: JavaScript, HTML, CSS  
 - Backend: Node.js  
 - Database: Firebase  
 - Version control: GitHub  
