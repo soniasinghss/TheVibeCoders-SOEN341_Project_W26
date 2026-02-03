@@ -47,3 +47,9 @@ button {
 button:hover {
   background: #2563eb;
 }
+.error {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  min-height: 18px; 
+}
