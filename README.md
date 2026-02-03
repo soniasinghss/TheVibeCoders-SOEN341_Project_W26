@@ -85,7 +85,7 @@ Each sprint includes planning, development, and review.
 
 ### Setup  
 ```bash
-git clone https://github.com/your-repo/MealMajor.git
+git clone https://github.com/soniasinghss/TheVibeCoders-SOEN341_Project_W26.git
 cd MealMajor
 npm install
 npm start
