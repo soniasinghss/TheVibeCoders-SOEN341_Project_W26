@@ -54,3 +54,15 @@ if (!token) {
       showError(err.message || 'Network or server error');
     });
 }
+// Logout functionality
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    // Clear auth data
+    localStorage.removeItem("token");
+
+    // Redirect to login page
+    window.location.href = "./login.html";
+  });
+}
