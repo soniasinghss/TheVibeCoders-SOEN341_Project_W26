@@ -1,28 +1,56 @@
-const token = localStorage.getItem('token');
+const loadingEl = document.getElementById('loading');
+const profileEl = document.getElementById('profile');
+const errorEl = document.getElementById('error');
 
-if (!token) {
-  window.location.href = '/login.html';
+function showError(msg) {
+  if (errorEl) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = msg || 'Unable to load profile';
+  }
+  if (loadingEl) loadingEl.style.display = 'none';
+  if (profileEl) profileEl.style.display = 'none';
 }
 
-fetch('http://localhost:4000/users/me', {
-  headers: {
-    Authorization: `Bearer ${token}`
+function decodeJwt(token) {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
+  } catch (e) {
+    return null;
   }
-})
-  .then(res => {
-    if (!res.ok) throw new Error();
-    return res.json();
-  })
-  .then(user => {
-    document.getElementById('name').textContent = user.name;
-    document.getElementById('email').textContent = user.email;
-    document.getElementById('dietPreferences').textContent = user.dietPreferences || 'N/A';
-    document.getElementById('allergies').textContent = user.allergies || 'N/A';
+}
 
-    document.getElementById('loading').hidden = true;
-    document.getElementById('profile').hidden = false;
+const token = localStorage.getItem('token');
+if (!token) {
+  showError('Not authenticated. Redirecting to login...');
+  setTimeout(() => window.location.href = './login.html', 800);
+} else {
+  const decoded = decodeJwt(token);
+  console.log('token:', token);
+  console.log('decoded token payload:', decoded);
+
+  fetch('http://localhost:4000/users/me', {
+    headers: { Authorization: `Bearer ${token}` }
   })
-  .catch(() => {
-    document.getElementById('loading').hidden = true;
-    document.getElementById('error').hidden = false;
-  });
+    .then(async res => {
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = text; }
+      console.log('/users/me response', res.status, data);
+      if (!res.ok) throw new Error(data?.error || data || `Status ${res.status}`);
+      return data;
+    })
+    .then(user => {
+      if (document.getElementById('name')) document.getElementById('name').textContent = user.name || 'Not provided';
+      if (document.getElementById('email')) document.getElementById('email').textContent = user.email || 'Not provided';
+      if (document.getElementById('dietPreferences')) document.getElementById('dietPreferences').textContent = user.dietPreferences || 'Not provided';
+      if (document.getElementById('allergies')) document.getElementById('allergies').textContent = user.allergies || 'Not provided';
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (profileEl) profileEl.style.display = 'block';
+      if (errorEl) errorEl.style.display = 'none';
+    })
+    .catch(err => {
+      console.error('Profile error:', err);
+      showError(err.message || 'Network or server error');
+    });
+}
