@@ -1,72 +1,98 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
+  background: #ffffff;
   margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
+  padding: 40px;
+  color: #1f2937;
 }
 
-.profile-card {
-  background: white;
-  width: 360px;
-  padding: 24px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+
+.page-title {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 40px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.error {
+  text-align: center;
+  color: #b00020;
+  margin-bottom: 20px;
+}
+
+
+.profile-layout {
+  max-width: 1000px;
+  margin: 0 auto;
+ 
+  grid-template-columns: 1.2fr 2fr;
+  gap: 30px;
+}
+
+
+.profile-main {
+  background: #1a66cf;
+  color: rgb(255, 255, 255);
+  border-radius: 14px;
+  padding: 30px;
   text-align: center;
 }
 
-.profile-card img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 16px;
-  border: 3px solid #3b82f6;
+.profile-main h2 {
+  margin: 10px 0;
 }
 
-.profile-card h2 {
-  margin-bottom: 8px;
-  color: #111827;
-}
-
-.profile-card p {
-  color: #4b5563;
-  margin-bottom: 12px;
+.subtitle {
   font-size: 0.95rem;
+  opacity: 0.9;
 }
 
-.profile-card button {
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.profile-cards {
+  max-width: 900px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-.profile-card button:hover {
-  background: #2563eb;
+.profile-cards h2 {
+  margin-top: 0;
+  color: #1a66cf;
 }
 
-.profile-info {
-  text-align: left;
-  margin-top: 20px;
+.info-card {
+  background: rgb(243, 245, 254);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-.profile-info label {
-  display: block;
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-top: 10px;
-}
-
-.profile-info span {
-  display: block;
+.info-card h3 {
+  margin-top: 0;
   font-size: 1rem;
+  color: #1a66cf;
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  margin-top: 8px;
   color: #111827;
-  margin-top: 2px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 800px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-cards {
+    grid-template-columns: 1fr;
+  }
 }

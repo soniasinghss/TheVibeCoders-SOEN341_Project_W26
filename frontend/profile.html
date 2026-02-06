@@ -1,23 +1,48 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Profile</title>
+    <meta charset="UTF-8"/>
+    <title>My Profile</title>
     <link rel="stylesheet" href="./profile.css" />
 
   </head>
   <body>
-    <h1>My Profile</h1>
     
     <div id="loading">Loading profile...</div>
 
-    <div id="profile" style="display:none;">
-      <p><strong>Name:</strong> <span id="name"></span></p>
-      <p><strong>Email:</strong> <span id="email"></span></p>
-      <p><strong>Diet preferences:</strong> <span id="dietPreferences"></span></p>
-      <p><strong>Allergies:</strong> <span id="allergies"></span></p>  
+    <div id="profile" class="profile-layout" style="display:none;">
+    
+    <div class="profile-main">
 
+      <h2>Welcome to your profile!</h2>
+      <p class="subtitle">Here you can view and manage your profile information
+      </p>
     </div>
+
+    <div class="profile-cards">
+      
+    <h2>Profile Informations</h2>
+
+    <div class="info-card">    
+    <div class="field">
+        <h3>Name</h3>
+        <p id="name">-</p></div>
+    <div class="field">
+        <h3>Email</h3>
+        <p id="email">-</p></div>
+
+        </div>
+    <div class="info-card">
+      <div class="field">
+      <h3>Diet Preferences</h3>
+        <p id="dietPreferences">—</p></div>
+      <div class="field">
+      <h3>Allergies</h3>
+        <p id="allergies">—</p></div>
+    </div>
+    </div>
+    </div>
+
 
     <div id="error" style="display:none;">
       Unable to load profile
