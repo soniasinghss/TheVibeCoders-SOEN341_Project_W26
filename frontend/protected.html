@@ -9,16 +9,30 @@
     <script src="./authGuard.js"></script>
     <h2>Protected Page</h2>
     <p id="welcome"></p>
+
+      <button id="viewProfileButton">View Profile</button>
+    
     <button id="logout">Logout</button>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-+        const email = localStorage.getItem('userEmail') || '';
-+        document.getElementById('welcome').textContent = email ? `Signed in as ${email}` : 'Signed in';
-+        document.getElementById('logout').addEventListener('click', () => {
-+          window.logoutUser();
-+        });
-+      });
+        const email = localStorage.getItem('userEmail') || '';
+        document.getElementById('welcome').textContent = email ? `Signed in as ${email}` : 'Signed in';
+
+        document.getElementById('viewProfileButton').addEventListener('click', () => {
+          window.location.href = './profile.html';
+        });
+
+        document.getElementById('logout').addEventListener('click', () => {
+          if (typeof window.logoutUser === 'function') {
+            window.logoutUser();
+          } else {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userEmail');
+            window.location.href = './login.html';
+          }
+        });
+      });
     </script>
   </body>
 </html>

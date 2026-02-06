@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
 
+import userRouter from "./routes/users.js";
+
 dotenv.config();
 
 const app = express();
@@ -12,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+
+app.use("/users", userRouter);
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
