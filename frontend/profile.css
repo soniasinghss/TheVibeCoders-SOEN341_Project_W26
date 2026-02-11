@@ -18,6 +18,43 @@ body {
   font-size: 1.1rem;
 }
 
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.notification.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.notification.error {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  border: 1px solid #fecaca;
+}
+
 .error {
   text-align: center;
   color: #b00020;
@@ -86,6 +123,201 @@ body {
   color: #111827;
 }
 
+.diet-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.diet-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.diet-options label:hover {
+  background: #f0f4ff;
+  border-color: #1a66cf;
+}
+
+.diet-options input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.allergy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.allergy-tag {
+  display: inline-block;
+  background-color: #dbeafe;
+  color: #0c4a6e;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #0284c7;
+}
+
+.allergy-tags-edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  min-height: 40px;
+}
+
+.allergy-tag-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #dbeafe;
+  color: #0c4a6e;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #0284c7;
+}
+
+.remove-allergyBtn {
+  background: none;
+  border: none;
+  color: #0c4a6e;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.remove-allergyBtn:hover {
+  color: #0369a1;
+}
+
+.allergy-input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.allergy-input-group input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.allergy-input-group input[type="text"]:focus {
+  outline: none;
+  border-color: #1a66cf;
+  box-shadow: 0 0 0 2px rgba(26, 102, 207, 0.1);
+}
+
+.allergy-input-group #addAllergyBtn {
+  padding: 8px 16px;
+  background-color: #1a66cf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.allergy-input-group #addAllergyBtn:hover {
+  background-color: #1451a8;
+}
+
+.allergy-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button-group.show {
+  display: flex;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+#editBtn {
+  background-color: #1a66cf;
+  color: white;
+}
+
+#editBtn:hover {
+  background-color: #1451a8;
+}
+
+#saveBtn {
+  background-color: #10b981;
+  color: white;
+}
+
+#saveBtn:hover {
+  background-color: #059669;
+}
+
+#cancelBtn {
+  background-color: #6b7280;
+  color: white;
+}
+
+#cancelBtn:hover {
+  background-color: #4b5563;
+}
+
+#logoutBtn {
+  background-color: #ef4444;
+  color: white;
+  margin-top: 20px;
+}
+
+#logoutBtn:hover {
+  background-color: #dc2626;
+}
+
 /* RESPONSIVE */
 @media (max-width: 800px) {
   .profile-layout {
@@ -94,5 +326,13 @@ body {
 
   .profile-cards {
     grid-template-columns: 1fr;
+  }
+
+  .diet-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .button-group {
+    flex-wrap: wrap;
   }
 }
