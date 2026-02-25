@@ -13,6 +13,7 @@ This project is part of a team assignment for Winter 2026 and is developed in fo
 - Omar Eshatti, UI/UX
 - Xanthippe Pentovelis, Scrum Master
 - Hoai Kiet Tran, Tester
+- Hirushi Rathnayaka, Frontend Developer
 
 
 
