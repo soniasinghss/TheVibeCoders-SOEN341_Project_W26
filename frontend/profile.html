@@ -1,11 +1,16 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8"/>
-    <title>My Profile</title>
-    <link rel="stylesheet" href="./profile.css" />
+    <meta charset="UTF-8" />
+    <title>My Profile | MealMajor</title>
 
+    <!-- Global Design System -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="profile.css" />
   </head>
+
   <body>
 
     <div id="loading">Loading profile...</div>
@@ -13,81 +18,120 @@
     <div id="notification" class="notification" style="display:none;"></div>
 
     <div id="profile" class="profile-layout" style="display:none;">
-    
-    <div class="profile-main">
 
-      <h2>Welcome to your profile!</h2>
-      <p class="subtitle">Here you can view and manage your profile information
-      </p>
-    </div>
+      <div class="profile-main">
+        <h2>Welcome to your profile!</h2>
+        <p class="subtitle">
+          Here you can view and manage your profile information
+        </p>
+      </div>
 
-    <div class="profile-cards">
-      
-    <h2>Profile Informations</h2>
+      <div class="profile-cards">
 
-    <div class="info-card">    
-    <div class="field">
-        <h3>Name</h3>
-        <p id="name">-</p></div>
-    <div class="field">
-        <h3>Email</h3>
-        <p id="email">-</p></div>
+        <h2>Profile Information</h2>
 
-        </div>
-    <div class="info-card">
-      <div class="field">
-      <h3>Diet Preferences</h3>
-        <p id="dietPreferencesDisplay">—</p>
-        <div id="dietPreferencesEdit" style="display:none;">
-          <div class="diet-options">
-            <label><input type="checkbox" name="diet" value="Vegetarian"> Vegetarian</label>
-            <label><input type="checkbox" name="diet" value="Vegan"> Vegan</label>
-            <label><input type="checkbox" name="diet" value="Gluten-Free"> Gluten-Free</label>
-            <label><input type="checkbox" name="diet" value="Keto"> Keto</label>
-            <label><input type="checkbox" name="diet" value="Paleo"> Paleo</label>
-            <label><input type="checkbox" name="diet" value="Kosher"> Kosher</label>
-            <label><input type="checkbox" name="diet" value="Halal"> Halal</label>
-            <label><input type="checkbox" name="diet" value="Dairy-Free"> Dairy-Free</label>
-            <label><input type="checkbox" name="diet" value="Nut-Free"> Nut-Free</label>
+        <div class="info-card">
+          <div class="field">
+            <h3>Name</h3>
+            <p id="name">-</p>
+          </div>
+
+          <div class="field">
+            <h3>Email</h3>
+            <p id="email">-</p>
           </div>
         </div>
-      </div>
-      <div class="field">
-      <h3>Allergies</h3>
-        <div id="allergiesDisplay">
-          <div id="allergyTags" class="allergy-tags">—</div>
-        </div>
-        <div id="allergiesEdit" style="display:none;">
-          <div id="allergyTagsEdit" class="allergy-tags-edit"></div>
-          <div id="allergyError" class="allergy-error" style="display:none;"></div>
-          <div class="allergy-input-group">
-            <input type="text" id="allergyInput" placeholder="Enter allergy and press Enter" />
-            <button id="addAllergyBtn">Add</button>
+
+        <div class="info-card">
+
+          <div class="field">
+            <h3>Diet Preferences</h3>
+            <p id="dietPreferencesDisplay">—</p>
+
+            <div id="dietPreferencesEdit" style="display:none;">
+              <div class="diet-options">
+                <label><input type="checkbox" name="diet" value="Vegetarian"> Vegetarian</label>
+                <label><input type="checkbox" name="diet" value="Vegan"> Vegan</label>
+                <label><input type="checkbox" name="diet" value="Gluten-Free"> Gluten-Free</label>
+                <label><input type="checkbox" name="diet" value="Keto"> Keto</label>
+                <label><input type="checkbox" name="diet" value="Paleo"> Paleo</label>
+                <label><input type="checkbox" name="diet" value="Kosher"> Kosher</label>
+                <label><input type="checkbox" name="diet" value="Halal"> Halal</label>
+                <label><input type="checkbox" name="diet" value="Dairy-Free"> Dairy-Free</label>
+                <label><input type="checkbox" name="diet" value="Nut-Free"> Nut-Free</label>
+              </div>
+            </div>
           </div>
+
+          <div class="field">
+            <h3>Allergies</h3>
+
+            <div id="allergiesDisplay">
+              <div id="allergyTags" class="allergy-tags">—</div>
+            </div>
+
+            <div id="allergiesEdit" style="display:none;">
+              <div id="allergyTagsEdit" class="allergy-tags-edit"></div>
+              <div id="allergyError" class="error" style="display:none;"></div>
+
+              <div class="allergy-input-group">
+                <input
+                  type="text"
+                  id="allergyInput"
+                  placeholder="Enter allergy and press Enter"
+                />
+                <button id="addAllergyBtn" class="button-secondary">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-    </div>
+
+    <!-- Diet Buttons -->
+    <div class="button-group">
+      <button id="editBtn" class="button-primary">
+        Edit Diet Preferences
+      </button>
+
+      <button id="saveBtn" class="button-primary" style="display:none;">
+        Save Changes
+      </button>
+
+      <button id="cancelBtn" class="button-secondary" style="display:none;">
+        Cancel
+      </button>
     </div>
 
+    <!-- Allergy Buttons -->
     <div class="button-group">
-      <button id="editBtn">Edit Diet Preferences</button>
-      <button id="saveBtn" style="display:none;">Save Changes</button>
-      <button id="cancelBtn" style="display:none;">Cancel</button>
+      <button id="editAllergiesBtn" class="button-primary">
+        Edit Allergies
+      </button>
+
+      <button id="saveAllergiesBtn" class="button-primary" style="display:none;">
+        Save Allergies
+      </button>
+
+      <button id="cancelAllergiesBtn" class="button-secondary" style="display:none;">
+        Cancel
+      </button>
     </div>
 
+    <!-- Logout -->
     <div class="button-group">
-      <button id="editAllergiesBtn">Edit Allergies</button>
-      <button id="saveAllergiesBtn" style="display:none;">Save Allergies</button>
-      <button id="cancelAllergiesBtn" style="display:none;">Cancel</button>
+      <button id="logoutBtn" class="button-secondary">
+        Logout
+      </button>
     </div>
-    
-<button id="logoutBtn">Logout</button>
 
     <div id="error" style="display:none;">
       Unable to load profile
     </div>
 
     <script src="profile.js"></script>
-    </body>
+  </body>
 </html>

@@ -1,0 +1,185 @@
+/* ===============================
+   DESIGN SYSTEM — MealMajor
+   =============================== */
+
+:root {
+  --primary: #2f7a4f;
+  --secondary: #4e9a6f;
+  --accent: #7fcf9a;
+  --background: #f4faf6;
+  --surface: #ffffff;
+  --text: #173326;
+  --text-secondary: #4a5f55;
+  --border: #cfe2d6;
+  --error: #b3261e;
+  --secondary-dark: #3f7d5a;
+  --error-dark: #8f1d18;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+/* ===============================
+   AUTH PAGE LAYOUT
+   =============================== */
+
+body.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url("backgroundpic.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Soft overlay */
+body.auth-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(244, 250, 246, 0.85);
+  z-index: 0;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+
+  width: 420px;
+  max-width: 90%;
+
+  padding: 40px;
+  border-radius: 20px;
+
+  background: var(--surface);
+  box-shadow: 0 20px 40px rgba(23, 51, 38, 0.15);
+}
+
+.card h2 {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-logo {
+  font-family: "Segoe UI", cursive;
+  font-size: 32px;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: var(--text-secondary);
+}
+
+.auth-name-row {
+  display: flex;
+  gap: 15px;
+}
+
+.auth-name-col {
+  flex: 1;
+}
+
+/* Inputs */
+
+label {
+  display: block;
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+input:focus {
+  border-color: var(--secondary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(78, 154, 111, 0.25);
+}
+
+/* Button */
+
+button,
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  margin-top: 28px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--secondary)
+  );
+  color: white;
+
+  box-shadow: 0 6px 16px rgba(47, 122, 79, 0.25);
+}
+
+button:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(47, 122, 79, 0.35);
+}
+
+/* Switch link */
+
+.auth-switch {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.auth-switch a {
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  color: var(--secondary);
+  text-decoration: underline;
+}
+
+/* Errors */
+
+.error {
+  color: var(--error);
+  font-size: 0.9rem;
+  margin-top: 4px;
+  min-height: 18px;
+}
+
+.success {
+  color: var(--secondary-dark);
+  font-size: 0.9rem;
+  margin-top: 8px;
+  min-height: 18px;
+}

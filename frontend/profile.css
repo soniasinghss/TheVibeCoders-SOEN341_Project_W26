@@ -1,9 +1,9 @@
 body {
   font-family: Arial, sans-serif;
-  background: #ffffff;
+  background: var(--background);
   margin: 0;
   padding: 40px;
-  color: #1f2937;
+  color: var(--text);
 }
 
 
@@ -44,20 +44,20 @@ body {
 }
 
 .notification.success {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background-color: color-mix(in srgb, var(--accent) 40%, var(--surface));
+  color: var(--text);
+  border: 1px solid var(--accent);
 }
 
 .notification.error {
-  background-color: #fee2e2;
-  color: #7f1d1d;
-  border: 1px solid #fecaca;
+  background-color: color-mix(in srgb, var(--error) 12%, var(--surface));
+  color: var(--error);
+  border: 1px solid color-mix(in srgb, var(--error) 35%, var(--surface));
 }
 
 .error {
   text-align: center;
-  color: #b00020;
+  color: var(--error);
   margin-bottom: 20px;
 }
 
@@ -72,8 +72,8 @@ body {
 
 
 .profile-main {
-  background: #1a66cf;
-  color: rgb(255, 255, 255);
+  background: var(--primary);
+  color: var(--surface);
   border-radius: 14px;
   padding: 30px;
   text-align: center;
@@ -101,26 +101,26 @@ body {
 
 .profile-cards h2 {
   margin-top: 0;
-  color: #1a66cf;
+  color: var(--primary);
 }
 
 .info-card {
-  background: rgb(243, 245, 254);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 25px rgba(23, 51, 38, 0.08);
 }
 
 .info-card h3 {
   margin-top: 0;
   font-size: 1rem;
-  color: #1a66cf;
+  color: var(--primary);
 }
 
 .info-card p {
   font-size: 0.95rem;
   margin-top: 8px;
-  color: #111827;
+  color: var(--text);
 }
 
 .diet-options {
@@ -135,8 +135,8 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: white;
-  border: 1px solid #d1d5db;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -144,8 +144,8 @@ body {
 }
 
 .diet-options label:hover {
-  background: #f0f4ff;
-  border-color: #1a66cf;
+  background: color-mix(in srgb, var(--accent) 28%, var(--surface));
+  border-color: var(--secondary);
 }
 
 .diet-options input[type="checkbox"] {
@@ -163,12 +163,12 @@ body {
 
 .allergy-tag {
   display: inline-block;
-  background-color: #dbeafe;
-  color: #0c4a6e;
+  background-color: color-mix(in srgb, var(--accent) 30%, var(--surface));
+  color: var(--text);
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.9rem;
-  border: 1px solid #0284c7;
+  border: 1px solid var(--secondary);
 }
 
 .allergy-tags-edit {
@@ -177,9 +177,9 @@ body {
   gap: 8px;
   margin-top: 12px;
   padding: 12px;
-  background: white;
+  background: var(--surface);
   border-radius: 6px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   min-height: 40px;
 }
 
@@ -187,18 +187,18 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: #dbeafe;
-  color: #0c4a6e;
+  background-color: color-mix(in srgb, var(--accent) 30%, var(--surface));
+  color: var(--text);
   padding: 6px 10px;
   border-radius: 20px;
   font-size: 0.9rem;
-  border: 1px solid #0284c7;
+  border: 1px solid var(--secondary);
 }
 
 .remove-allergyBtn {
   background: none;
   border: none;
-  color: #0c4a6e;
+  color: var(--secondary-dark);
   cursor: pointer;
   font-size: 1.2rem;
   padding: 0;
@@ -211,7 +211,7 @@ body {
 }
 
 .remove-allergyBtn:hover {
-  color: #0369a1;
+  color: var(--primary);
 }
 
 .allergy-input-group {
@@ -223,21 +223,21 @@ body {
 .allergy-input-group input[type="text"] {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.9rem;
 }
 
 .allergy-input-group input[type="text"]:focus {
   outline: none;
-  border-color: #1a66cf;
-  box-shadow: 0 0 0 2px rgba(26, 102, 207, 0.1);
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(127, 207, 154, 0.35);
 }
 
 .allergy-input-group #addAllergyBtn {
   padding: 8px 16px;
-  background-color: #1a66cf;
-  color: white;
+  background-color: var(--secondary);
+  color: var(--surface);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -246,16 +246,16 @@ body {
 }
 
 .allergy-input-group #addAllergyBtn:hover {
-  background-color: #1451a8;
+  background-color: var(--secondary-dark);
 }
 
 .allergy-error {
-  color: #dc2626;
+  color: var(--error);
   font-size: 0.85rem;
   margin-top: 8px;
   padding: 8px 12px;
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
+  background-color: color-mix(in srgb, var(--error) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--error) 35%, var(--surface));
   border-radius: 4px;
 }
 
@@ -272,50 +272,42 @@ body {
   display: flex;
 }
 
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
-}
 
 #editBtn {
-  background-color: #1a66cf;
-  color: white;
+  background-color: var(--primary);
+  color: var(--surface);
 }
 
 #editBtn:hover {
-  background-color: #1451a8;
+  background-color: var(--primary-dark);
 }
 
 #saveBtn {
-  background-color: #10b981;
-  color: white;
+  background-color: var(--secondary);
+  color: var(--surface);
 }
 
 #saveBtn:hover {
-  background-color: #059669;
+  background-color: var(--secondary-dark);
 }
 
 #cancelBtn {
-  background-color: #6b7280;
-  color: white;
+  background-color: var(--text-secondary);
+  color: var(--surface);
 }
 
 #cancelBtn:hover {
-  background-color: #4b5563;
+  background-color: var(--text);
 }
 
 #logoutBtn {
-  background-color: #ef4444;
-  color: white;
+  background-color: var(--error);
+  color: var(--surface);
   margin-top: 20px;
 }
 
 #logoutBtn:hover {
-  background-color: #dc2626;
+  background-color: var(--error-dark);
 }
 
 /* RESPONSIVE */
