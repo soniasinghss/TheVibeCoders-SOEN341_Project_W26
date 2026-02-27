@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.js";
 import recipesRoutes from "./routes/recipes.js"; // ✅ NEW
+import userRouter from "./routes/users.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use((err, req, res, next) => {
 
 app.use("/auth", authRoutes);
 app.use("/recipes", recipesRoutes); // ✅ NEW
+app.use("/users", userRouter);
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });

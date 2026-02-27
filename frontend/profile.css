@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
   background: var(--background);
   margin: 0;
-  padding: 40px;
+  padding: 10px;
   color: var(--text);
 }
 
@@ -10,7 +10,7 @@ body {
 .page-title {
   text-align: center;
   font-size: 2.2rem;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .loading {
@@ -63,19 +63,21 @@ body {
 
 
 .profile-layout {
+  display: grid;
   max-width: 1000px;
   margin: 0 auto;
  
   grid-template-columns: 1.2fr 2fr;
-  gap: 30px;
+  gap: 20px;
 }
 
 
 .profile-main {
+  grid-column: 1 / -1;
   background: var(--primary);
   color: var(--surface);
   border-radius: 14px;
-  padding: 30px;
+  padding: 10px;
   text-align: center;
 }
 
@@ -89,13 +91,13 @@ body {
 }
 
 .profile-cards {
+  padding: 20px;
   max-width: 900px;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
   border-radius: 14px;
-  padding: 30px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
@@ -107,12 +109,12 @@ body {
 .info-card {
   background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0 10px 25px rgba(23, 51, 38, 0.08);
 }
 
 .info-card h3 {
-  margin-top: 0;
+  margin-top: 10px;
   font-size: 1rem;
   color: var(--primary);
 }
@@ -126,7 +128,7 @@ body {
 .diet-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
+  gap: 5px;
   margin-top: 12px;
 }
 
@@ -262,7 +264,7 @@ body {
 .button-group {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
