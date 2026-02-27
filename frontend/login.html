@@ -1,34 +1,45 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sign In</title>
-    <link rel="stylesheet" href="./login.css" />
-  </head>
-  <body>
-    <div class="card">
-      <h2>Sign In</h2>
-      <form id="loginForm">
-        <div>
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" required />
-        </div>
+<head>
+  <meta charset="utf-8" />
+  <title>Sign In | MealMajor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-        <div>
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" required />
-        </div>
+<body class="auth-page">
 
-        <div>
-          <button type="submit">Sign In</button>
-        </div>
-      </form>
+  <div class="card">
 
-      <p class="signup-link">Don't have an account? <a href="./register.html">Register</a></p>
-      <div id="error" class="error"></div>
+    <!-- Logo -->
+    <h2 class="auth-logo">
+      MealMajor 🌿
+    </h2>
+
+    <p class="auth-subtitle">
+      Hello There! Sign in to continue
+    </p>
+
+    <form id="loginForm">
+
+      <label for="email">Email</label>
+      <input id="email" type="email" required />
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required />
+
+      <button type="submit">Sign In</button>
+
+    </form>
+
+    <div class="auth-switch">
+      Don’t have an account?
+      <a href="register.html">Register</a>
     </div>
 
-    <script src="./login.js"></script>
-  </body>
+    <div id="error" class="error"></div>
+
+  </div>
+
+  <script src="login.js"></script>
+</body>
 </html>
