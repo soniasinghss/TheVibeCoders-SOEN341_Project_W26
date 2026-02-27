@@ -1,25 +1,28 @@
 // backend/src/routes/recipes.js
 import express from "express";
+import Recipe from "../models/Recipe.js";
 
 const router = express.Router();
 
 // POST /recipes
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { name, ingredients, prepTime, steps, cost } = req.body ?? {};
 
-  // Validate name
+  // =========================
+  // VALIDATION (TA-7.5)
+  // =========================
+
   if (!name || typeof name !== "string" || name.trim() === "") {
     return res.status(400).json({
       success: false,
-      error: "Recipe name is required."
+      error: "Recipe name is required.",
     });
   }
 
-  // Validate ingredients
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return res.status(400).json({
       success: false,
-      error: "At least one ingredient is required."
+      error: "At least one ingredient is required.",
     });
   }
 
@@ -33,61 +36,58 @@ router.post("/", (req, res) => {
     if (!ingName) {
       return res.status(400).json({
         success: false,
-        error: `Ingredient #${i + 1} name is required.`
+        error: `Ingredient #${i + 1} name is required.`,
       });
     }
 
     if (!unit) {
       return res.status(400).json({
         success: false,
-        error: `Ingredient #${i + 1} unit is required.`
+        error: `Ingredient #${i + 1} unit is required.`,
       });
     }
 
     if (!Number.isFinite(qty) || qty <= 0) {
       return res.status(400).json({
         success: false,
-        error: `Ingredient #${i + 1} quantity must be a positive number.`
+        error: `Ingredient #${i + 1} quantity must be a positive number.`,
       });
     }
   }
 
-  // Validate prepTime
   const prep = Number(prepTime);
   if (!Number.isFinite(prep) || prep <= 0) {
     return res.status(400).json({
       success: false,
-      error: "prepTime must be a positive number."
+      error: "prepTime must be a positive number.",
     });
   }
 
-  // Validate steps
   if (!steps || typeof steps !== "string" || steps.trim() === "") {
     return res.status(400).json({
       success: false,
-      error: "steps are required."
+      error: "steps are required.",
     });
   }
 
-  // Validate cost (optional)
   let parsedCost = null;
   if (cost !== undefined && cost !== null && String(cost).trim() !== "") {
     const c = Number(cost);
     if (!Number.isFinite(c) || c < 0) {
       return res.status(400).json({
         success: false,
-        error: "cost must be a non-negative number."
+        error: "cost must be a non-negative number.",
       });
     }
     parsedCost = c;
   }
 
-  // Placeholder response (NO DB save in this task)
-  return res.status(201).json({
-    success: true,
-    message: "Recipe received (not saved to DB yet).",
-    data: {
-      id: `temp_${Date.now()}`,
+  // =========================
+  // DATABASE SAVE (TA-7.6)
+  // =========================
+
+  try {
+    const newRecipe = await Recipe.create({
       name: name.trim(),
       ingredients: ingredients.map((ing) => ({
         name: String(ing.name).trim(),
@@ -97,8 +97,22 @@ router.post("/", (req, res) => {
       prepTime: prep,
       steps: steps.trim(),
       cost: parsedCost,
-    },
-  });
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Recipe saved successfully.",
+      data: newRecipe,
+    });
+
+  } catch (err) {
+    console.error("Database error:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      error: "Failed to save recipe.",
+    });
+  }
 });
 
 export default router;
