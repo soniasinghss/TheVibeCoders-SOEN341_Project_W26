@@ -13,14 +13,20 @@
 
   <body>
 
-      <img src="images/mealprep.png" alt="MealMajor Logo" class="logo"/>
-    </div>
+    <!-- ✅ NEW Navigation -->
+    <nav class="nav">
+      <a href="profile.html">Profile</a>
+      <a href="recipes.html">View Recipes</a>
+      <a href="createRecipe.html">Create Recipe</a>
+    </nav>
+
 
     <div id="loading">Loading profile...</div>
 
     <div id="notification" class="notification" style="display:none;"></div>
 
-    <div id="profile" >
+    <div id="profile">
+
 
       <div class="profile-main">
         <h2>Welcome to your MealMajor 🌿 profile!</h2>
@@ -31,95 +37,93 @@
 
       <div class="profile-layout">
 
-      <div class="profile-cards">
+        <div class="profile-cards">
 
-        <h2>Profile Information</h2>
 
-        <div class="info-card">
-          <div class="field">
-            <h3>Name</h3>
-            <p id="name">-</p>
+          <h2>Profile Information</h2>
+
+          <div class="info-card">
+            <div class="field">
+              <h3>Name</h3>
+              <p id="name">-</p>
+            </div>
+
+            <div class="field">
+              <h3>Email</h3>
+              <p id="email">-</p>
+            </div>
           </div>
 
-          <div class="field">
-            <h3>Email</h3>
-            <p id="email">-</p>
-          </div>
-        </div>
+          <div class="info-card">
 
-        <div class="info-card">
+            <div class="field">
+              <h3>Diet Preferences</h3>
+              <p id="dietPreferencesDisplay">—</p>
 
-          <div class="field">
-            <h3>Diet Preferences</h3>
-            <p id="dietPreferencesDisplay">—</p>
-
-            <div id="dietPreferencesEdit" style="display:none;">
-              <div class="diet-options">
-                <label><input type="checkbox" name="diet" value="Vegetarian"> Vegetarian</label>
-                <label><input type="checkbox" name="diet" value="Vegan"> Vegan</label>
-                <label><input type="checkbox" name="diet" value="Gluten-Free"> Gluten-Free</label>
-                <label><input type="checkbox" name="diet" value="Keto"> Keto</label>
-                <label><input type="checkbox" name="diet" value="Paleo"> Paleo</label>
-                <label><input type="checkbox" name="diet" value="Kosher"> Kosher</label>
-                <label><input type="checkbox" name="diet" value="Halal"> Halal</label>
-                <label><input type="checkbox" name="diet" value="Dairy-Free"> Dairy-Free</label>
-                <label><input type="checkbox" name="diet" value="Nut-Free"> Nut-Free</label>
+              <div id="dietPreferencesEdit" style="display:none;">
+                <div class="diet-options">
+                  <label><input type="checkbox" name="diet" value="Vegetarian"> Vegetarian</label>
+                  <label><input type="checkbox" name="diet" value="Vegan"> Vegan</label>
+                  <label><input type="checkbox" name="diet" value="Gluten-Free"> Gluten-Free</label>
+                  <label><input type="checkbox" name="diet" value="Keto"> Keto</label>
+                  <label><input type="checkbox" name="diet" value="Paleo"> Paleo</label>
+                  <label><input type="checkbox" name="diet" value="Kosher"> Kosher</label>
+                  <label><input type="checkbox" name="diet" value="Halal"> Halal</label>
+                  <label><input type="checkbox" name="diet" value="Dairy-Free"> Dairy-Free</label>
+                  <label><input type="checkbox" name="diet" value="Nut-Free"> Nut-Free</label>
+                </div>
               </div>
-            </div>
-                <!-- Diet Buttons -->
-    <div class="button-group">
-      <button id="editBtn" class="button-primary">
-        Edit Diet Preferences
-      </button>
 
-      <button id="saveBtn" class="button-primary" style="display:none;">
-        Save Changes
-      </button>
-
-      <button id="cancelBtn" class="button-secondary" style="display:none;">
-        Cancel
-      </button>
-    </div>
-          </div>
-
-          <div class="field">
-            <h3>Allergies</h3>
-
-            <div id="allergiesDisplay">
-              <div id="allergyTags" class="allergy-tags">—</div>
-            </div>
-
-            <div id="allergiesEdit" style="display:none;">
-              <div id="allergyTagsEdit" class="allergy-tags-edit"></div>
-              <div id="allergyError" class="error" style="display:none;"></div>
-
-              <div class="allergy-input-group">
-                <input
-                  type="text"
-                  id="allergyInput"
-                  placeholder="Enter allergy and press Enter"
-                />
-                <button id="addAllergyBtn" class="button-secondary">
-                  Add
+              <div class="button-group">
+                <button id="editBtn" class="button-primary">
+                  Edit Diet Preferences
+                </button>
+                <button id="saveBtn" class="button-primary" style="display:none;">
+                  Save Changes
+                </button>
+                <button id="cancelBtn" class="button-secondary" style="display:none;">
+                  Cancel
                 </button>
               </div>
             </div>
-            <!-- Allergy Buttons -->
-    <div class="button-group">
-      <button id="editAllergiesBtn" class="button-primary">
-        Edit Allergies
-      </button>
 
-      <button id="saveAllergiesBtn" class="button-primary" style="display:none;">
-        Save Allergies
-      </button>
+            <div class="field">
+              <h3>Allergies</h3>
 
-      <button id="cancelAllergiesBtn" class="button-secondary" style="display:none;">
-        Cancel
-      </button>
-    </div>
+              <div id="allergiesDisplay">
+                <div id="allergyTags" class="allergy-tags">—</div>
+              </div>
+
+              <div id="allergiesEdit" style="display:none;">
+                <div id="allergyTagsEdit" class="allergy-tags-edit"></div>
+                <div id="allergyError" class="error" style="display:none;"></div>
+
+                <div class="allergy-input-group">
+                  <input
+                    type="text"
+                    id="allergyInput"
+                    placeholder="Enter allergy and press Enter"
+                  />
+                  <button id="addAllergyBtn" class="button-secondary">
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <div class="button-group">
+                <button id="editAllergiesBtn" class="button-primary">
+                  Edit Allergies
+                </button>
+                <button id="saveAllergiesBtn" class="button-primary" style="display:none;">
+                  Save Allergies
+                </button>
+                <button id="cancelAllergiesBtn" class="button-secondary" style="display:none;">
+                  Cancel
+                </button>
+              </div>
+            </div>
+
           </div>
-
         </div>
       </div>
     </div>
