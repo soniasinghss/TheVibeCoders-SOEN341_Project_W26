@@ -12,15 +12,6 @@
   </head>
 
   <body>
-
-    <!-- ✅ NEW Navigation -->
-    <nav class="nav">
-      <a href="profile.html">Profile</a>
-      <a href="recipes.html">View Recipes</a>
-      <a href="createRecipe.html">Create Recipe</a>
-    </nav>
-
-
     <div id="loading">Loading profile...</div>
 
     <div id="notification" class="notification" style="display:none;"></div>
@@ -29,6 +20,14 @@
 
 
       <div class="profile-main">
+        <div class="top-bar">
+  <div class="top-bar">
+  <button class="button-secondary back-btn"
+          onclick="window.location.href='protected.html'">
+    ← Back
+  </button>
+</div>
+</div>
         <h2>Welcome to your MealMajor 🌿 profile!</h2>
         <p class="subtitle">
           Here you can view and manage your profile information
@@ -140,6 +139,11 @@
     </div>
 
     <script src="profile.js"></script>
+    <script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
     </div>
   </div>
   </body>

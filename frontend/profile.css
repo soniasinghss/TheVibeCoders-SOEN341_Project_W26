@@ -336,3 +336,30 @@ body {
     flex-wrap: wrap;
   }
 }
+.top-bar {
+  margin: 20px 0;
+}
+
+.top-bar {
+  position: fixed;
+  top: 25px;
+  left: 40px;
+}
+
+.back-link {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f6f4e, #4c8c68);
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transition: 0.2s ease;
+}
+
+.back-link:hover {
+  transform: translateY(-2px);
+}
