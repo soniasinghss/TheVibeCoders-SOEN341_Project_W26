@@ -4,6 +4,46 @@ import Recipe from "../models/Recipe.js";
 
 const router = express.Router();
 
+/**
+ * GET /recipes
+ * Optional query:
+ *   - search: string (searches by recipe name, case-insensitive)
+ * Example:
+ *   GET /recipes?search=chicken
+ */
+router.get("/", async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    const query = {};
+
+    if (search && String(search).trim() !== "") {
+      query.name = {
+        $regex: String(search).trim(),
+        $options: "i", // case-insensitive
+      };
+    }
+
+    const recipes = await Recipe.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: search ? "Search results." : "All recipes.",
+      count: recipes.length,
+      data: recipes,
+    });
+  } catch (err) {
+    console.error("Unexpected server error (GET /recipes):", err);
+    return res.status(500).json({
+      success: false,
+      error: "Something went wrong while fetching recipes.",
+    });
+  }
+});
+
+/**
+ * POST /recipes
+ */
 router.post("/", async (req, res) => {
   try {
     const { name, ingredients, prepTime, steps, cost } = req.body ?? {};
@@ -103,13 +143,8 @@ router.post("/", async (req, res) => {
       message: "Recipe created successfully.",
       data: newRecipe,
     });
-
   } catch (err) {
-    console.error("Unexpected server error:", err);
-
-    // =========================
-    // SERVER ERROR (500)
-    // =========================
+    console.error("Unexpected server error (POST /recipes):", err);
 
     return res.status(500).json({
       success: false,
