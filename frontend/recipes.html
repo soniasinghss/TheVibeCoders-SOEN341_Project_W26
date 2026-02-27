@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recipes</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="recipes.css" />
+</head>
+<body>
+
+  <nav>
+    <a href="createRecipe.html">Create Recipe</a>
+    <a href="recipes.html">View Recipes</a>
+  </nav>
+
+  <div class="container">
+    <h1>Recipes</h1>
+
+    <!-- ✅ Search UI goes HERE -->
+    <div class="searchRow">
+      <input id="searchInput" type="text" placeholder="Search recipes..." />
+      <button id="searchBtn" type="button">Search</button>
+      <button id="clearBtn" type="button">Clear</button>
+    </div>
+
+    <!-- ✅ Results go HERE -->
+    <div id="recipesContainer"></div>
+  </div>
+
+  <script src="authGuard.js"></script>
+  <script src="recipes.js"></script>
+</body>
+</html>
