@@ -1,30 +1,33 @@
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="register.css">
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Protected</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="register.css" />
   </head>
-  <body>
+  <body class="auth-page">
     <script src="./authGuard.js"></script>
-    <h2>Protected Page</h2>
-    <p id="welcome"></p>
+    <div class="card">
+      <h2 class="auth-logo">MealMajor Dashboard</h2>
+      <p id="welcome"></p>
 
-      <button id="viewProfileButton">View Profile</button>
-    
-    <button id="logout">Logout</button>
+      <div class="auth-switch" style="display:flex; gap:16px; justify-content:center; margin-bottom:24px;">
+        <a href="profile.html" id="viewProfileButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Profile</a>
+        <a href="recipes.html" id="viewRecipesButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Recipes</a>
+        <a href="createRecipe.html" id="createRecipeButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">Create Recipe</a>
+      </div>
+
+      <button id="logout" style="margin-top:18px;">Logout</button>
+    </div>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const email = localStorage.getItem('userEmail') || '';
         document.getElementById('welcome').textContent = email ? `Signed in as ${email}` : 'Signed in';
 
-        document.getElementById('viewProfileButton').addEventListener('click', () => {
-          window.location.href = './profile.html';
-        });
+        // links already handle navigation
 
         document.getElementById('logout').addEventListener('click', () => {
           if (typeof window.logoutUser === 'function') {

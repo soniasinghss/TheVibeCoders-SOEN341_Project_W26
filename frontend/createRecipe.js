@@ -1,9 +1,19 @@
-const form = document.getElementById("createRecipeForm");
-const ingredientsContainer = document.getElementById("ingredientsContainer");
-const addIngredientBtn = document.getElementById("addIngredientBtn");
-const message = document.getElementById("message");
+let form;
+let ingredientsContainer;
+let addIngredientBtn;
+let message;
 
-// ---------- helpers ----------
+const API_BASE = (() => {
+  try {
+    const stored = localStorage.getItem("apiBase");
+    if (!stored) return "http://localhost:4000";
+    if (stored.includes(":3000")) return "http://localhost:4000";
+    return stored;
+  } catch (e) {
+    return "http://localhost:4000";
+  }
+})();
+
 function setMessage(text, ok = false) {
   message.textContent = text;
   message.className = ok ? "success-text" : "error-text";
@@ -11,7 +21,6 @@ function setMessage(text, ok = false) {
 }
 
 function ensureErrorEl(inputEl) {
-  // error message element placed right after the input/textarea
   const next = inputEl.nextElementSibling;
   if (next && next.classList.contains("error-text")) return next;
 
@@ -48,7 +57,6 @@ function isNonNegativeNumber(value) {
   return Number.isFinite(n) && n >= 0;
 }
 
-// ---------- Ingredient UI ----------
 function createIngredientRow() {
   const row = document.createElement("div");
   row.className = "ingredient-row";
@@ -68,14 +76,12 @@ function createIngredientRow() {
 
   row.querySelector(".remove-btn").addEventListener("click", () => {
     row.remove();
-    // If user removes and fixes, clear top message
     setMessage("");
   });
 
-  // Clear inline errors as user types
   row.querySelectorAll("input").forEach((inp) => {
     inp.addEventListener("input", () => clearError(inp));
-    inp.addEventListener("blur", () => validateIngredientRow(row)); // optional live validation
+    inp.addEventListener("blur", () => validateIngredientRow(row));
   });
 
   return row;
@@ -85,15 +91,6 @@ function addIngredientRow() {
   ingredientsContainer.appendChild(createIngredientRow());
 }
 
-addIngredientBtn.addEventListener("click", () => {
-  addIngredientRow();
-  setMessage("");
-});
-
-// Start with 1 row
-addIngredientRow();
-
-// ---------- Validation ----------
 function validateRecipeName() {
   const el = document.getElementById("recipeName");
   const v = el.value.trim();
@@ -136,7 +133,6 @@ function validateCost() {
   const el = document.getElementById("cost");
   const v = el.value.trim();
 
-  // cost is optional
   if (v === "") {
     clearError(el);
     return true;
@@ -160,7 +156,6 @@ function validateIngredientRow(row) {
 
   let ok = true;
 
-  // Each ingredient must have a name
   if (!name) {
     showError(nameEl, "Ingredient name is required.");
     ok = false;
@@ -168,7 +163,6 @@ function validateIngredientRow(row) {
     clearError(nameEl);
   }
 
-  // Each ingredient must have a quantity
   if (!qty) {
     showError(qtyEl, "Quantity is required.");
     ok = false;
@@ -179,7 +173,6 @@ function validateIngredientRow(row) {
     clearError(qtyEl);
   }
 
-  // Unit must not be empty (your issue says if included; since we include it, require it)
   if (!unit) {
     showError(unitEl, "Unit is required.");
     ok = false;
@@ -207,40 +200,89 @@ function validateIngredientsSection() {
   return allOk;
 }
 
-// Clear error messages once the user corrects inputs
-["recipeName", "prepTime", "prepSteps", "cost"].forEach((id) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.addEventListener("input", () => {
-    clearError(el);
+document.addEventListener("DOMContentLoaded", () => {
+  form = document.getElementById("createRecipeForm");
+  ingredientsContainer = document.getElementById("ingredientsContainer");
+  addIngredientBtn = document.getElementById("addIngredientBtn");
+  message = document.getElementById("message");
+
+  addIngredientBtn.addEventListener("click", () => {
+    addIngredientRow();
     setMessage("");
   });
-});
 
-// Optional: validate on blur for nicer UX
-document.getElementById("recipeName").addEventListener("blur", validateRecipeName);
-document.getElementById("prepTime").addEventListener("blur", validatePrepTime);
-document.getElementById("prepSteps").addEventListener("blur", validatePrepSteps);
-document.getElementById("cost").addEventListener("blur", validateCost);
+  addIngredientRow();
 
-// ---------- Submit ----------
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  setMessage("");
+  ["recipeName", "prepTime", "prepSteps", "cost"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", () => {
+      clearError(el);
+      setMessage("");
+    });
+  });
 
-  const okName = validateRecipeName();
-  const okIngs = validateIngredientsSection();
-  const okTime = validatePrepTime();
-  const okSteps = validatePrepSteps();
-  const okCost = validateCost();
+  document.getElementById("recipeName").addEventListener("blur", validateRecipeName);
+  document.getElementById("prepTime").addEventListener("blur", validatePrepTime);
+  document.getElementById("prepSteps").addEventListener("blur", validatePrepSteps);
+  document.getElementById("cost").addEventListener("blur", validateCost);
 
-  const allOk = okName && okIngs && okTime && okSteps && okCost;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setMessage("");
 
-  if (!allOk) {
-    // Prevent submission
-    return;
-  }
+    const okName = validateRecipeName();
+    const okIngs = validateIngredientsSection();
+    const okTime = validatePrepTime();
+    const okSteps = validatePrepSteps();
+    const okCost = validateCost();
 
-  // Still frontend-only; backend later
-  setMessage("✅ Form is valid (client-side). Ready for backend integration.", true);
+    const allOk = okName && okIngs && okTime && okSteps && okCost;
+    if (!allOk) return;
+
+    const name = document.getElementById("recipeName").value.trim();
+    const prepTime = Number(document.getElementById("prepTime").value);
+    const steps = document.getElementById("prepSteps").value.trim();
+    const costVal = document.getElementById("cost").value.trim();
+    const cost = costVal === "" ? null : Number(costVal);
+
+    const rows = ingredientsContainer.querySelectorAll(".ingredient-row");
+    const ingredients = Array.from(rows).map((row) => ({
+      name: row.querySelector(".ing-name").value.trim(),
+      quantity: Number(row.querySelector(".ing-qty").value),
+      unit: row.querySelector(".ing-unit").value.trim(),
+    }));
+
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`${API_BASE}/recipes`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ name, ingredients, prepTime, steps, cost }),
+      });
+
+      const j = await res.json().catch(() => ({}));
+
+      if (res.status === 400) {
+        setMessage(j.error || "Invalid input.", false);
+        return;
+      }
+
+      if (!res.ok) {
+        setMessage(j.error || "Failed to create recipe.", false);
+        return;
+      }
+
+      setMessage(j.message || "Recipe created successfully.", true);
+      setTimeout(() => {
+        window.location.href = "recipes.html";
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error while creating recipe.", false);
+    }
+  });
 });

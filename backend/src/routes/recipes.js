@@ -290,4 +290,131 @@ router.post("/", async (req, res) => {
   }
 });
 
+// LIST /recipes - return all recipes
+router.get("/", async (req, res) => {
+  try {
+    const all = await Recipe.find().lean();
+    return res.json({ success: true, data: all });
+  } catch (err) {
+    console.error("Error listing recipes:", err);
+    return res.status(500).json({ success: false, error: "Something went wrong while fetching recipes." });
+  }
+});
+
+// GET /recipes/:id - fetch a single recipe
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const recipe = await Recipe.findById(id).lean();
+    if (!recipe) {
+      return res.status(404).json({ success: false, error: "Recipe not found." });
+    }
+    return res.json({ success: true, data: recipe });
+  } catch (err) {
+    console.error("Error fetching recipe:", err);
+    return res.status(500).json({ success: false, error: "Something went wrong while fetching the recipe." });
+  }
+});
+
+// PUT /recipes/:id - update an existing recipe
+router.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { name, ingredients, prepTime, steps, cost } = req.body ?? {};
+
+    // =========================
+    // VALIDATION (400 errors) - reuse same rules as POST
+    // =========================
+
+    if (!name || typeof name !== "string" || name.trim() === "") {
+      return res.status(400).json({ success: false, error: "Recipe name is required." });
+    }
+
+    if (!Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ success: false, error: "At least one ingredient is required." });
+    }
+
+    for (let i = 0; i < ingredients.length; i++) {
+      const ing = ingredients[i];
+      const ingName = String(ing?.name ?? "").trim();
+      const unit = String(ing?.unit ?? "").trim();
+      const qty = Number(ing?.quantity);
+
+      if (!ingName) {
+        return res.status(400).json({ success: false, error: `Ingredient #${i + 1} name is required.` });
+      }
+
+      if (!unit) {
+        return res.status(400).json({ success: false, error: `Ingredient #${i + 1} unit is required.` });
+      }
+
+      if (!Number.isFinite(qty) || qty <= 0) {
+        return res.status(400).json({ success: false, error: `Ingredient #${i + 1} quantity must be a positive number.` });
+      }
+    }
+
+    const prep = Number(prepTime);
+    if (!Number.isFinite(prep) || prep <= 0) {
+      return res.status(400).json({ success: false, error: "prepTime must be a positive number." });
+    }
+
+    if (!steps || typeof steps !== "string" || steps.trim() === "") {
+      return res.status(400).json({ success: false, error: "steps are required." });
+    }
+
+    let parsedCost = null;
+    if (cost !== undefined && cost !== null && String(cost).trim() !== "") {
+      const c = Number(cost);
+      if (!Number.isFinite(c) || c < 0) {
+        return res.status(400).json({ success: false, error: "cost must be a non-negative number." });
+      }
+      parsedCost = c;
+    }
+
+    // =========================
+    // DATABASE UPDATE (200)
+    // =========================
+
+    const update = {
+      name: name.trim(),
+      ingredients: ingredients.map((ing) => ({
+        name: String(ing.name).trim(),
+        quantity: Number(ing.quantity),
+        unit: String(ing.unit).trim(),
+      })),
+      prepTime: prep,
+      steps: steps.trim(),
+      cost: parsedCost,
+    };
+
+    const updated = await Recipe.findByIdAndUpdate(id, update, { new: true });
+    if (!updated) {
+      return res.status(404).json({ success: false, error: "Recipe not found." });
+    }
+
+    return res.json({ success: true, message: "Recipe updated successfully.", data: updated });
+
+  } catch (err) {
+    console.error("Unexpected server error while updating:", err);
+    return res.status(500).json({ success: false, error: "Something went wrong while updating the recipe." });
+  }
+});
+
+// DELETE /recipes/:id - delete an existing recipe
+router.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deleted = await Recipe.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: "Recipe not found." });
+    }
+
+    return res.json({ success: true, message: "Recipe deleted successfully.", data: deleted });
+  } catch (err) {
+    console.error("Unexpected server error while deleting:", err);
+    return res.status(500).json({ success: false, error: "Something went wrong while deleting the recipe." });
+  }
+});
+
 export default router;

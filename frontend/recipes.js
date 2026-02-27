@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // frontend/recipes.js
 console.log("recipes.js loaded ✅");
 
@@ -131,3 +132,128 @@ document.addEventListener("DOMContentLoaded", () => {
   // Optional: load all recipes on page load
   fetchRecipes();
 });
+=======
+const recipesList = document.getElementById('recipesList');
+const message = document.getElementById('message');
+
+// API base same as other scripts
+const API_BASE = (() => {
+  try {
+    const stored = localStorage.getItem("apiBase");
+    if (!stored) return "http://localhost:4000";
+    if (stored.includes(":3000")) return "http://localhost:4000";
+    return stored;
+  } catch (e) {
+    return "http://localhost:4000";
+  }
+})();
+
+function setMessage(text, ok = false) {
+  message.textContent = text;
+  message.className = ok ? "success-text" : "error-text";
+  if (!text) message.className = "";
+}
+
+async function deleteRecipeById(recipeId, listItem) {
+  const confirmed = window.confirm("Are you sure you want to delete this recipe?");
+  if (!confirmed) return;
+
+  try {
+    const token = localStorage.getItem("token");
+    const headers = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/recipes/${recipeId}`, {
+      method: "DELETE",
+      headers,
+    });
+
+    const j = await res.json().catch(() => ({}));
+
+    if (res.status === 404) {
+      setMessage(j.error || "Recipe not found.", false);
+      return;
+    }
+
+    if (!res.ok) {
+      setMessage(j.error || "Failed to delete recipe.", false);
+      return;
+    }
+
+    listItem.remove();
+    setMessage(j.message || "Recipe deleted successfully.", true);
+    setTimeout(() => {
+      window.location.href = "protected.html";
+    }, 400);
+  } catch (err) {
+    console.error(err);
+    setMessage("Server error while deleting recipe.", false);
+  }
+}
+
+async function loadRecipes() {
+  try {
+    let res = await fetch(`${API_BASE}/recipes`);
+    let j;
+    try {
+      j = await res.json();
+    } catch (e) {
+      // fallback: if apiBase is wrong, try local backend directly
+      res = await fetch('http://localhost:4000/recipes');
+      try {
+        j = await res.json();
+      } catch (e2) {
+        setMessage('Backend response is not JSON. Check that backend is running on http://localhost:4000.', false);
+        return;
+      }
+    }
+    if (!res.ok || !j.success) {
+      setMessage(j && j.error ? j.error : 'Failed to fetch recipes.', false);
+      return;
+    }
+    const arr = Array.isArray(j.data) ? j.data : [];
+    recipesList.innerHTML = '';
+    if (arr.length === 0) {
+      setMessage('No recipes found.', false);
+      return;
+    }
+    arr.forEach((r) => {
+      const li = document.createElement('li');
+      li.textContent = r.name + ' ';
+
+      const editLink = document.createElement('a');
+      editLink.href = `editRecipe.html?id=${r._id}`;
+      editLink.textContent = '[Edit]';
+      editLink.className = 'btn-primary';
+      editLink.style.color = 'white';
+      editLink.style.width = 'auto';
+      editLink.style.display = 'inline-block';
+      editLink.style.textDecoration = 'none';
+      editLink.style.padding = '8px 14px';
+      editLink.style.marginTop = '0';
+      editLink.style.marginLeft = '8px';
+      li.appendChild(editLink);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.className = 'btn-primary';
+      deleteBtn.style.color = 'white';
+      deleteBtn.style.width = 'auto';
+      deleteBtn.style.display = 'inline-block';
+      deleteBtn.style.padding = '8px 14px';
+      deleteBtn.style.marginTop = '0';
+      deleteBtn.style.marginLeft = '8px';
+      deleteBtn.addEventListener('click', () => deleteRecipeById(r._id, li));
+      li.appendChild(deleteBtn);
+
+      recipesList.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+    setMessage('Server error while loading recipes.', false);
+  }
+}
+
+loadRecipes();
+>>>>>>> 3082245 (Implement recipe edit/delete flow, fix create/view recipe UX and protected page labels)
