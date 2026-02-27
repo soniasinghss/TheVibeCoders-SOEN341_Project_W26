@@ -2,75 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-<<<<<<< HEAD
   <title>Recipes</title>
-
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="recipes.css" />
 </head>
+<body class="auth-page">
+  <script src="authGuard.js"></script>
 
-<body>
+  <div class="card">
+    <div class="auth-switch">
+      <a href="protected.html" class="btn-primary nav-btn">Back</a>
+      <a href="createRecipe.html" class="btn-primary nav-btn">Create Recipe</a>
+    </div>
 
-  <!-- ✅ Navigation -->
-  <nav class="top-nav">
-    <a href="profile.html">Profile</a>
-    <a href="createRecipe.html">Create Recipe</a>
-    <a href="recipes.html">View Recipes</a>
-    <a href="#" id="logoutBtn">Logout</a>
-  </nav>
-
-  <div class="container">
     <h1>Recipes</h1>
-
-    <!-- ========================= -->
-    <!-- FILTER SECTION -->
-    <!-- ========================= -->
     <div class="filters">
-
-      <!-- Search -->
       <div class="filterRow">
-        <input
-          id="searchInput"
-          type="text"
-          placeholder="Search recipe name..."
-        />
+        <input id="searchInput" type="text" placeholder="Search recipe name..." />
       </div>
-
-      <!-- Prep Time -->
       <div class="filterRow">
-        <input
-          id="minPrepTime"
-          type="number"
-          min="0"
-          placeholder="Min prep time (min)"
-        />
-        <input
-          id="maxPrepTime"
-          type="number"
-          min="0"
-          placeholder="Max prep time (min)"
-        />
+        <input id="minPrepTime" type="number" min="0" placeholder="Min prep time (min)" />
+        <input id="maxPrepTime" type="number" min="0" placeholder="Max prep time (min)" />
       </div>
-
-      <!-- Cost -->
       <div class="filterRow">
-        <input
-          id="minCost"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="Min cost"
-        />
-        <input
-          id="maxCost"
-          type="number"
-          min="0"
-          step="0.01"
-          placeholder="Max cost"
-        />
+        <input id="minCost" type="number" min="0" step="0.01" placeholder="Min cost" />
+        <input id="maxCost" type="number" min="0" step="0.01" placeholder="Max cost" />
       </div>
-
-      <!-- Difficulty -->
       <div class="filterRow">
         <select id="difficulty">
           <option value="">Any difficulty</option>
@@ -79,61 +36,15 @@
           <option value="hard">Hard</option>
         </select>
       </div>
-
-      <!-- Dietary Tags -->
       <div class="filterRow">
-        <input
-          id="dietaryTags"
-          type="text"
-          placeholder="Dietary tags (comma separated) e.g. vegan, gluten-free"
-        />
+        <input id="dietaryTags" type="text" placeholder="Dietary tags (comma separated)" />
       </div>
-
-      <!-- Buttons -->
       <div class="filterRow">
         <button id="applyBtn" type="button">Apply Filters</button>
         <button id="clearBtn" type="button">Clear</button>
       </div>
-
     </div>
 
-    <!-- ========================= -->
-    <!-- RESULTS -->
-    <!-- ========================= -->
-    <div id="recipesContainer"></div>
-
-  </div>
-
-  <!-- ✅ Protect page (optional) -->
-  <script src="authGuard.js"></script>
-
-  <!-- ✅ Logout -->
-  <script>
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-    });
-  </script>
-
-  <!-- Main logic -->
-  <script src="recipes.js"></script>
-
-</body>
-</html>
-=======
-  <title>All Recipes</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body class="auth-page">
-  <script src="authGuard.js"></script>
-
-  <div class="card">
-    <div class="auth-switch">
-      <a href="protected.html" class="btn-primary" style="color:white;">Back</a>
-      <a href="createRecipe.html" class="btn-primary" style="color:white;">Create Recipe</a>
-    </div>
-
-    <h1>Recipes</h1>
     <ul id="recipesList"></ul>
     <p id="message"></p>
   </div>
@@ -141,4 +52,3 @@
   <script src="recipes.js"></script>
 </body>
 </html>
->>>>>>> 3082245 (Implement recipe edit/delete flow, fix create/view recipe UX and protected page labels)
