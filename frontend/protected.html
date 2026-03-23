@@ -13,10 +13,11 @@
       <h2 class="auth-logo">MealMajor Dashboard</h2>
       <p id="welcome"></p>
 
-      <div class="auth-switch" style="display:flex; gap:16px; justify-content:center; margin-bottom:24px;">
-        <a href="profile.html" id="viewProfileButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Profile</a>
-        <a href="recipes.html" id="viewRecipesButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Recipes</a>
-        <a href="createRecipe.html" id="createRecipeButton" class="btn-primary" style="width:auto;min-width:120px;color:white;">Create Recipe</a>
+      <div class="auth-switch" style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
+        <a href="profile.html" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Profile</a>
+        <a href="recipes.html" class="btn-primary" style="width:auto;min-width:120px;color:white;">View Recipes</a>
+        <a href="createRecipe.html" class="btn-primary" style="width:auto;min-width:120px;color:white;">Create Recipe</a>
+        <a href="mealPlan.html" class="btn-primary" style="width:auto;min-width:120px;color:white;">Meal Planner</a> <!-- ✅ NEW -->
       </div>
 
       <button id="logout" style="margin-top:18px;">Logout</button>
@@ -27,14 +28,13 @@
         const email = localStorage.getItem('userEmail') || '';
         document.getElementById('welcome').textContent = email ? `Signed in as ${email}` : 'Signed in';
 
-        // links already handle navigation
-
         document.getElementById('logout').addEventListener('click', () => {
           if (typeof window.logoutUser === 'function') {
             window.logoutUser();
           } else {
             localStorage.removeItem('token');
             localStorage.removeItem('userEmail');
+            localStorage.removeItem('userId'); // ✅ also clear userId on logout
             window.location.href = './login.html';
           }
         });
