@@ -6,9 +6,16 @@ const router = express.Router();
 
 router.get("/me", requireAuth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select("name email dietPreferences allergies");
+        const user = await User.findById(req.user.id).select("name firstName lastName email dietPreferences allergies");
         if (!user) {
             return res.status(404).json({ error: "User not found." });
+        }
+
+        // Backward compatibility: if firstName/lastName not set, try to use name
+        if (!user.firstName && user.name) {
+            const nameParts = user.name.split(' ');
+            user.firstName = nameParts[0] || '';
+            user.lastName = nameParts.slice(1).join(' ') || '';
         }
 
         res.json(user);
@@ -45,7 +52,7 @@ router.put("/me", requireAuth, async (req, res) => {
         }
 
         await user.save();
-        res.json({ message: "Profile updated successfully", user: { name: user.name, email: user.email, dietPreferences: user.dietPreferences, allergies: user.allergies } });
+        res.json({ message: "Profile updated successfully", user: { name: user.name, firstName: user.firstName, lastName: user.lastName, email: user.email, dietPreferences: user.dietPreferences, allergies: user.allergies } });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to update profile." });

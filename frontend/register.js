@@ -1,6 +1,8 @@
 const form = document.getElementById("registerForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+const firstNameInput = document.getElementById("firstName");
+const lastNameInput = document.getElementById("lastName");
 
 const emailError = document.getElementById("emailError");
 const passwordError = document.getElementById("passwordError");
@@ -31,8 +33,18 @@ function showSuccess(text) {
   msg.className = "success";
 }
 
-function validateInputs(email, password) {
+function validateInputs(firstName, lastName, email, password) {
   let ok = true;
+
+  if (!firstName) {
+    showError(msg, "First name is required");
+    ok = false;
+  }
+
+  if (!lastName) {
+    showError(msg, "Last name is required");
+    ok = false;
+  }
 
   if (!email) {
     showError(emailError, "Email is required");
@@ -57,16 +69,18 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   clearErrors();
 
+  const firstName = firstNameInput.value.trim();
+  const lastName = lastNameInput.value.trim();
   const email = emailInput.value.trim();
   const password = passwordInput.value;
 
-  if (!validateInputs(email, password)) return;
+  if (!validateInputs(firstName, lastName, email, password)) return;
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ firstName, lastName, email, password })
     });
 
     const data = await res.json().catch(() => ({}));

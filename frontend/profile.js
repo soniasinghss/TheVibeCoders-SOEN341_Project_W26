@@ -56,7 +56,8 @@ if (!token) {
     })
     .then(user => {
       currentUser = user;
-      if (document.getElementById('name')) document.getElementById('name').textContent = user.name || 'Not provided';
+      if (document.getElementById('firstname')) document.getElementById('firstname').textContent = user.firstName || 'Not provided';
+      if (document.getElementById('lastname')) document.getElementById('lastname').textContent = user.lastName || 'Not provided';
       if (document.getElementById('email')) document.getElementById('email').textContent = user.email || 'Not provided';
       if (document.getElementById('dietPreferencesDisplay')) document.getElementById('dietPreferencesDisplay').textContent = user.dietPreferences || 'Not provided';
       renderAllergyTags(user.allergies);

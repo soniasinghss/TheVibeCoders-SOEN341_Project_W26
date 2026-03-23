@@ -8,22 +8,24 @@ const router = express.Router();
 // Register route
 router.post("/register", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required." });
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: "First name, last name, email and password are required." });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
 
     const user = await User.create({
+      firstName,
+      lastName,
       email: email.toLowerCase(),
       passwordHash
     });
 
     return res.status(201).json({
       message: "User registered successfully.",
-      user: { id: user._id, email: user.email }
+      user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
     });
   } catch (err) {
     if (err?.code === 11000) {
