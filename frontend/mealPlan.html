@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Meal Planner – MealMajor</title>
+  <link rel="stylesheet" href="mealPlan.css" />
+</head>
+<body class="auth-page">
+  <script src="./authGuard.js"></script>
+
+  <div class="planner-wrapper">
+
+    <a href="protected.html" class="back-btn">&#8592; Back</a>
+
+    <h1>Weekly Meal Planner</h1>
+
+    <div class="week-nav">
+      <button class="btn-icon" id="prevWeek">&#8592;</button>
+      <span class="week-label" id="weekLabel">Loading...</span>
+      <button class="btn-icon" id="nextWeek">&#8594;</button>
+    </div>
+
+    <div id="msg" class="success"></div>
+    <div id="errorMsg" class="error"></div>
+
+    <div class="grid-wrapper">
+      <table class="meal-grid" id="mealGrid">
+        <thead><tr id="gridHeader"></tr></thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <dialog id="addMealModal" class="modal">
+    <div class="modal-content">
+      <h2>Add a Meal</h2>
+      <p class="slot-label" id="modalSlotLabel"></p>
+      <label for="recipeSelect">Choose a recipe</label>
+      <select id="recipeSelect">
+        <option value="">-- Select recipe --</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelModal">Cancel</button>
+        <button class="btn btn-primary" id="confirmAdd">Add to Plan</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="mealPlan.js"></script>
+</body>
+</html>
