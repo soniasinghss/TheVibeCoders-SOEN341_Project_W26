@@ -1,12 +1,54 @@
 // frontend/mealPlan.js
-const BASE_URL = "http://localhost:4000";
+const API_BASE_CANDIDATES = Array.from(
+  new Set([
+    window.location.origin,
+    "http://localhost:4000",
+    "http://127.0.0.1:4000",
+    "http://localhost:4001",
+    "http://127.0.0.1:4001",
+  ])
+);
+let activeApiBase = API_BASE_CANDIDATES[0];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
+
+async function fetchWithApiFallback(path, options = {}) {
+  const orderedBases = [
+    activeApiBase,
+    ...API_BASE_CANDIDATES.filter((base) => base !== activeApiBase),
+  ];
+
+  let lastNetworkError = null;
+  let lastHttpResponse = null;
+  for (const base of orderedBases) {
+    try {
+      const res = await fetch(`${base}${path}`, options);
+
+      // If we hit a static file server (or wrong host), try the next candidate.
+      if (res.status === 404 || res.status === 405) {
+        lastHttpResponse = res;
+        continue;
+      }
+
+      activeApiBase = base;
+      return res;
+    } catch (err) {
+      lastNetworkError = err;
+    }
+  }
+
+  if (lastHttpResponse) {
+    return lastHttpResponse;
+  }
+
+  throw lastNetworkError || new Error("Backend is unreachable.");
+}
 
 // ── State ──
 let currentWeekOffset = 0;
 let mealPlanData = {}; // "Monday|breakfast" -> entry
 let pendingSlot = null;
+let editingEntryId = null;
 
 // ── DOM ──
 const gridHeader  = document.getElementById("gridHeader");
@@ -14,16 +56,48 @@ const gridBody    = document.getElementById("gridBody");
 const weekLabel   = document.getElementById("weekLabel");
 const toast       = document.getElementById("toast");
 const modal       = document.getElementById("addMealModal");
+const modalTitle  = document.getElementById("modalTitle");
 const modalLabel  = document.getElementById("modalSlotLabel");
 const recipeSelect = document.getElementById("recipeSelect");
+const slotDaySelect = document.getElementById("slotDaySelect");
+const slotMealTypeSelect = document.getElementById("slotMealTypeSelect");
+const servingsInput = document.getElementById("servingsInput");
 const confirmBtn  = document.getElementById("confirmAdd");
 const cancelBtn   = document.getElementById("cancelModal");
 const msgEl       = document.getElementById("msg");
 const errorMsgEl  = document.getElementById("errorMsg");
 
+// Populate static selectors once
+for (const day of DAYS) {
+  const opt = document.createElement("option");
+  opt.value = day;
+  opt.textContent = day;
+  slotDaySelect.appendChild(opt);
+}
+for (const type of MEAL_TYPES) {
+  const opt = document.createElement("option");
+  opt.value = type;
+  opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+  slotMealTypeSelect.appendChild(opt);
+}
+
 // ── Get userId from localStorage (set during login) ──
 function getUserId() {
-  return localStorage.getItem("userId");
+  const explicitUserId = localStorage.getItem("userId");
+  if (explicitUserId) return explicitUserId;
+
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const payloadJson = atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"));
+    const payload = JSON.parse(payloadJson);
+    return payload.uid || null;
+  } catch (err) {
+    return null;
+  }
 }
 
 // ── Week helpers ──
@@ -85,17 +159,25 @@ function renderGrid() {
       if (entry) {
         const chip = document.createElement("div");
         chip.className = "recipe-chip";
+        const meta = formatEntryMeta(entry);
         chip.innerHTML = `
-          <span>${escapeHtml(entry.recipe.name)}</span>
-          <button title="Remove" aria-label="Remove meal">✕</button>
+          <div class="chip-main">
+            <span class="chip-title">${escapeHtml(entry.recipe?.name || "Untitled recipe")}</span>
+            <span class="chip-meta">${escapeHtml(meta)}</span>
+          </div>
+          <div class="chip-actions">
+            <button class="edit-btn" type="button" title="Edit" aria-label="Edit meal">Edit</button>
+            <button type="button" title="Remove" aria-label="Remove meal">✕</button>
+          </div>
         `;
-        chip.querySelector("button").addEventListener("click", () => removeEntry(entry._id));
+        chip.querySelector(".edit-btn").addEventListener("click", () => openEditModal(entry));
+        chip.querySelector(".chip-actions button:last-child").addEventListener("click", () => removeEntry(entry._id));
         inner.appendChild(chip);
       } else {
         const addBtn = document.createElement("button");
         addBtn.className = "add-btn";
         addBtn.textContent = "+ Add";
-        addBtn.addEventListener("click", () => openModal(day, mealType));
+        addBtn.addEventListener("click", () => openAddModal(day, mealType));
         inner.appendChild(addBtn);
       }
 
@@ -118,7 +200,7 @@ async function loadMealPlan() {
 
   try {
     const weekId = getWeekId(currentWeekOffset);
-    const res = await fetch(`${BASE_URL}/meal-plan?userId=${userId}&weekId=${weekId}`);
+    const res = await fetchWithApiFallback(`/meal-plan?userId=${userId}&weekId=${weekId}`);
     const data = await res.json();
 
     mealPlanData = {};
@@ -137,7 +219,7 @@ async function loadMealPlan() {
 // ── Load saved recipes into dropdown ──
 async function loadRecipes() {
   try {
-    const res = await fetch(`${BASE_URL}/recipes`);
+    const res = await fetchWithApiFallback("/recipes");
     const data = await res.json();
     const recipes = data.data || [];
 
@@ -155,21 +237,64 @@ async function loadRecipes() {
 
 // ── Modal ──
 function openModal(day, mealType) {
+  openAddModal(day, mealType);
+}
+
+function formatEntryMeta(entry) {
+  const servings = `${entry.servings || 1} serving${Number(entry.servings || 1) > 1 ? "s" : ""}`;
+  return servings;
+}
+
+function openAddModal(day, mealType) {
   pendingSlot = { day, mealType };
+  editingEntryId = null;
+  modalTitle.textContent = "Add a Meal";
+  confirmBtn.textContent = "Add to Plan";
   modalLabel.textContent = `${day} · ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}`;
+  slotDaySelect.value = day;
+  slotMealTypeSelect.value = mealType;
   recipeSelect.value = "";
+  servingsInput.value = "1";
+  modal.showModal();
+}
+
+function openEditModal(entry) {
+  pendingSlot = { day: entry.day, mealType: entry.mealType };
+  editingEntryId = entry._id;
+  modalTitle.textContent = "Edit Planned Meal";
+  confirmBtn.textContent = "Save Changes";
+  modalLabel.textContent = `${entry.day} · ${entry.mealType.charAt(0).toUpperCase() + entry.mealType.slice(1)}`;
+  slotDaySelect.value = entry.day;
+  slotMealTypeSelect.value = entry.mealType;
+  recipeSelect.value = entry.recipe?._id || entry.recipeId || "";
+  servingsInput.value = String(entry.servings || 1);
   modal.showModal();
 }
 
 cancelBtn.addEventListener("click", () => {
   modal.close();
   pendingSlot = null;
+  editingEntryId = null;
 });
 
 confirmBtn.addEventListener("click", async () => {
   const recipeId = recipeSelect.value;
+  const selectedDay = slotDaySelect.value;
+  const selectedMealType = slotMealTypeSelect.value;
+  const servings = Number(servingsInput.value);
+
   if (!recipeId) {
     showToast("Please select a recipe.", true);
+    return;
+  }
+
+  if (!selectedDay || !selectedMealType) {
+    showToast("Please select day and meal type.", true);
+    return;
+  }
+
+  if (!Number.isInteger(servings) || servings < 1) {
+    showToast("Servings must be at least 1.", true);
     return;
   }
 
@@ -180,28 +305,41 @@ confirmBtn.addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/meal-plan`, {
-      method: "POST",
+    const payload = {
+      userId,
+      recipeId,
+      day: selectedDay,
+      mealType: selectedMealType,
+      weekId: getWeekId(currentWeekOffset),
+      servings,
+    };
+
+    const isEditing = Boolean(editingEntryId);
+    const endpoint = isEditing
+      ? `/meal-plan/${editingEntryId}`
+      : "/meal-plan";
+
+    const res = await fetchWithApiFallback(endpoint, {
+      method: isEditing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId,
-        recipeId,
-        day: pendingSlot.day,
-        mealType: pendingSlot.mealType,
-        weekId: getWeekId(currentWeekOffset),
-      }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     modal.close();
     pendingSlot = null;
+    editingEntryId = null;
 
     if (data.success) {
-      showToast(data.message);
+      showToast(data.message || (isEditing ? "Meal updated successfully." : "Meal added to planner."));
+      msgEl.textContent = data.message || (isEditing ? "Meal updated successfully." : "Meal added to planner.");
+      errorMsgEl.textContent = "";
       await loadMealPlan();
     } else {
-      showToast(data.error, true);
+      errorMsgEl.textContent = data.error || "Failed to save meal.";
+      showToast(data.error || "Failed to save meal.", true);
     }
   } catch (err) {
+    errorMsgEl.textContent = "Could not reach backend.";
     showToast("Could not reach backend.", true);
   }
 });
@@ -210,7 +348,7 @@ confirmBtn.addEventListener("click", async () => {
 async function removeEntry(entryId) {
   if (!confirm("Remove this meal from your plan?")) return;
   try {
-    const res = await fetch(`${BASE_URL}/meal-plan/${entryId}`, { method: "DELETE" });
+    const res = await fetchWithApiFallback(`/meal-plan/${entryId}`, { method: "DELETE" });
     const data = await res.json();
     if (data.success) {
       showToast(data.message);
