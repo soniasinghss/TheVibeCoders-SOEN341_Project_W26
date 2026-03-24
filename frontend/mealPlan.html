@@ -34,15 +34,26 @@
 
   <dialog id="addMealModal" class="modal">
     <div class="modal-content">
-      <h2>Add a Meal</h2>
+      <h2 id="modalTitle">Add a Meal</h2>
       <p class="slot-label" id="modalSlotLabel"></p>
+
+      <label for="slotDaySelect">Day</label>
+      <select id="slotDaySelect"></select>
+
+      <label for="slotMealTypeSelect">Meal type</label>
+      <select id="slotMealTypeSelect"></select>
+
       <label for="recipeSelect">Choose a recipe</label>
       <select id="recipeSelect">
         <option value="">-- Select recipe --</option>
       </select>
+
+      <label for="servingsInput">Servings</label>
+      <input id="servingsInput" type="number" min="1" step="1" value="1" />
+
       <div class="modal-actions">
         <button class="btn btn-secondary" id="cancelModal">Cancel</button>
-        <button class="btn btn-primary" id="confirmAdd">Add to Plan</button>
+        <button class="btn btn-primary" id="confirmAdd">Save</button>
       </div>
     </div>
   </dialog>
