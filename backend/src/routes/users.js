@@ -27,10 +27,18 @@ router.get("/me", requireAuth, async (req, res) => {
 
 router.put("/me", requireAuth, async (req, res) => {
     try {
-        const { dietPreferences, allergies } = req.body;
+        const { dietPreferences, allergies, firstName, lastName } = req.body;
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ error: "User not found." });
+        }
+
+        if (firstName !== undefined) {
+            user.firstName = String(firstName).trim();
+        }
+
+        if (lastName !== undefined) {
+            user.lastName = String(lastName).trim();
         }
 
         if (dietPreferences !== undefined) user.dietPreferences = dietPreferences;
