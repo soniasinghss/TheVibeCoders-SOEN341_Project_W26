@@ -49,12 +49,29 @@
               <h3>Name</h3>
               <p id="firstname">-</p>
               <p id="lastname">-</p>
+
+              <div id="nameEdit" style="display:none; margin-top: 8px;">
+                <input type="text" id="firstNameInput" placeholder="First Name" style="margin-bottom: 8px; width: 100%; padding: 8px;" />
+                <input type="text" id="lastNameInput" placeholder="Last Name" style="width: 100%; padding: 8px;" />
+              </div>
             </div>
 
             <div class="field">
               <h3>Email</h3>
               <p id="email">-</p>
             </div>
+                <div class="button-group">
+                <button id="editBtnName" class="button-primary">
+                  Edit Name
+                </button>
+                <button id="saveBtnName" class="button-primary" style="display:none;">
+                  Save Changes
+                </button>
+                <button id="cancelBtnName" class="button-secondary" style="display:none;">
+                  Cancel
+                </button>
+              </div>
+
           </div>
 
           <div class="info-card">

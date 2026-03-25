@@ -59,12 +59,15 @@ if (!token) {
       if (document.getElementById('firstname')) document.getElementById('firstname').textContent = user.firstName || 'Not provided';
       if (document.getElementById('lastname')) document.getElementById('lastname').textContent = user.lastName || 'Not provided';
       if (document.getElementById('email')) document.getElementById('email').textContent = user.email || 'Not provided';
+      if (document.getElementById('firstNameInput')) document.getElementById('firstNameInput').value = user.firstName || '';
+      if (document.getElementById('lastNameInput')) document.getElementById('lastNameInput').value = user.lastName || '';
       if (document.getElementById('dietPreferencesDisplay')) document.getElementById('dietPreferencesDisplay').textContent = user.dietPreferences || 'Not provided';
       renderAllergyTags(user.allergies);
       if (loadingEl) loadingEl.style.display = 'none';
       if (profileEl) profileEl.style.display = 'block';
       if (errorEl) errorEl.style.display = 'none';
       setupEditMode();
+      setupNameEditMode();
       setupAllergiesEditMode();
     })
     .catch(err => {
@@ -148,6 +151,92 @@ function setupEditMode() {
     } catch (err) {
       console.error('Error updating preferences:', err);
       showNotification('Failed to update diet preferences: ' + err.message, 'error');
+    }
+  });
+}
+
+// Name edit mode functionality
+function setupNameEditMode() {
+  const editBtnName = document.getElementById('editBtnName');
+  const saveBtnName = document.getElementById('saveBtnName');
+  const cancelBtnName = document.getElementById('cancelBtnName');
+  const nameEditEl = document.getElementById('nameEdit');
+  const firstNameInput = document.getElementById('firstNameInput');
+  const lastNameInput = document.getElementById('lastNameInput');
+  const firstNameDisplay = document.getElementById('firstname');
+  const lastNameDisplay = document.getElementById('lastname');
+
+  if (!editBtnName || !saveBtnName || !cancelBtnName || !nameEditEl || !firstNameInput || !lastNameInput) {
+    return;
+  }
+
+  editBtnName.addEventListener('click', () => {
+    nameEditEl.style.display = 'block';
+    if (firstNameDisplay) firstNameDisplay.style.display = 'none';
+    if (lastNameDisplay) lastNameDisplay.style.display = 'none';
+    firstNameInput.value = currentUser.firstName || '';
+    lastNameInput.value = currentUser.lastName || '';
+
+    editBtnName.style.display = 'none';
+    saveBtnName.style.display = 'inline-block';
+    cancelBtnName.style.display = 'inline-block';
+  });
+
+  cancelBtnName.addEventListener('click', () => {
+    nameEditEl.style.display = 'none';
+    if (firstNameDisplay) firstNameDisplay.style.display = 'block';
+    if (lastNameDisplay) lastNameDisplay.style.display = 'block';
+
+    firstNameInput.value = currentUser.firstName || '';
+    lastNameInput.value = currentUser.lastName || '';
+
+    editBtnName.style.display = 'inline-block';
+    saveBtnName.style.display = 'none';
+    cancelBtnName.style.display = 'none';
+  });
+
+  saveBtnName.addEventListener('click', async () => {
+    const newFirstName = firstNameInput.value.trim();
+    const newLastName = lastNameInput.value.trim();
+
+    if (!newFirstName || !newLastName) {
+      showNotification('Please provide both first and last name.', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:4000/users/me', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ firstName: newFirstName, lastName: newLastName })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Failed to update name');
+
+      currentUser.firstname = newFirstName;
+      currentUser.lastname = newLastName;
+      if (firstNameDisplay) {
+        firstNameDisplay.textContent = newFirstName;
+        firstNameDisplay.style.display = 'block';
+      }
+      if (lastNameDisplay) {
+        lastNameDisplay.textContent = newLastName;
+        lastNameDisplay.style.display = 'block';
+      }
+
+      nameEditEl.style.display = 'none';
+      editBtnName.style.display = 'inline-block';
+      saveBtnName.style.display = 'none';
+      cancelBtnName.style.display = 'none';
+
+      showNotification('Name updated successfully!', 'success');
+    } catch (err) {
+      console.error('Error updating name:', err);
+      showNotification('Failed to update name: ' + err.message, 'error');
     }
   });
 }
