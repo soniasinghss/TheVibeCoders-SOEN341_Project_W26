@@ -45,6 +45,15 @@ function mapEntry(entry) {
 	};
 }
 
+async function isDuplicateMeal(userId, recipeId, weekId, excludeId = null) {
+	const query = { userId, recipeId, weekId };
+	if (excludeId) {
+		query._id = { $ne: excludeId };
+	}
+	const existing = await Mealplan.exists(query);
+	return Boolean(existing);
+}
+
 router.get("/", async (req, res) => {
 	try {
 		const { userId, weekId } = req.query;
@@ -126,6 +135,14 @@ router.post("/", async (req, res) => {
 			return res.status(404).json({
 				success: false,
 				error: "Recipe not found.",
+			});
+		}
+
+		const duplicate = await isDuplicateMeal(userId, recipeId, weekId);
+		if (duplicate) {
+			return res.status(409).json({
+				success: false,
+				error: "This meal is already planned for this week. Please choose a different meal.",
 			});
 		}
 
@@ -285,6 +302,14 @@ router.put("/:id", async (req, res) => {
 				}
 				entry.plannedDateTime = parsedDateTime;
 			}
+		}
+
+		const duplicate = await isDuplicateMeal(entry.userId, entry.recipeId, entry.weekId, entry._id);
+		if (duplicate) {
+			return res.status(409).json({
+				success: false,
+				error: "This meal is already planned for this week. Please choose a different meal.",
+			});
 		}
 
 		const slotConflict = await Mealplan.findOne({

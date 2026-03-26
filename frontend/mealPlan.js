@@ -66,6 +66,7 @@ const confirmBtn  = document.getElementById("confirmAdd");
 const cancelBtn   = document.getElementById("cancelModal");
 const msgEl       = document.getElementById("msg");
 const errorMsgEl  = document.getElementById("errorMsg");
+const modalErrorMsgEl = document.getElementById("modalErrorMsg");
 
 // Populate static selectors once
 for (const day of DAYS) {
@@ -255,6 +256,7 @@ function openAddModal(day, mealType) {
   slotMealTypeSelect.value = mealType;
   recipeSelect.value = "";
   servingsInput.value = "1";
+  modalErrorMsgEl.textContent = "";
   modal.showModal();
 }
 
@@ -268,6 +270,7 @@ function openEditModal(entry) {
   slotMealTypeSelect.value = entry.mealType;
   recipeSelect.value = entry.recipe?._id || entry.recipeId || "";
   servingsInput.value = String(entry.servings || 1);
+  modalErrorMsgEl.textContent = "";
   modal.showModal();
 }
 
@@ -275,6 +278,11 @@ cancelBtn.addEventListener("click", () => {
   modal.close();
   pendingSlot = null;
   editingEntryId = null;
+  modalErrorMsgEl.textContent = "";
+});
+
+recipeSelect.addEventListener("change", () => {
+  modalErrorMsgEl.textContent = "";
 });
 
 confirmBtn.addEventListener("click", async () => {
@@ -325,21 +333,21 @@ confirmBtn.addEventListener("click", async () => {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    modal.close();
-    pendingSlot = null;
-    editingEntryId = null;
-
     if (data.success) {
+      modal.close();
+      pendingSlot = null;
+      editingEntryId = null;
       showToast(data.message || (isEditing ? "Meal updated successfully." : "Meal added to planner."));
       msgEl.textContent = data.message || (isEditing ? "Meal updated successfully." : "Meal added to planner.");
       errorMsgEl.textContent = "";
+      modalErrorMsgEl.textContent = "";
       await loadMealPlan();
     } else {
-      errorMsgEl.textContent = data.error || "Failed to save meal.";
+      modalErrorMsgEl.textContent = data.error || "Failed to save meal.";
       showToast(data.error || "Failed to save meal.", true);
     }
   } catch (err) {
-    errorMsgEl.textContent = "Could not reach backend.";
+    modalErrorMsgEl.textContent = "Could not reach backend.";
     showToast("Could not reach backend.", true);
   }
 });
