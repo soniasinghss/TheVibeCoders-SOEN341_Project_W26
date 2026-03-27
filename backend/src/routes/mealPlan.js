@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import MealPlanEntry from "../models/MealPlan.js";
+import MealPlanEntry from "../models/Mealplan.js";
 import Recipe from "../models/Recipe.js";
 
 const router = express.Router();
