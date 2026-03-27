@@ -7,11 +7,11 @@ const message = document.getElementById("message");
 const API_BASE = (() => {
   try {
     const stored = localStorage.getItem("apiBase");
-    if (!stored) return "http://localhost:4000";
-    if (stored.includes(":3000")) return "http://localhost:4000";
+    if (!stored) return "https://thevibecoders-soen341-project-w26.onrender.com";
+    if (stored.includes(":3000")) return "https://thevibecoders-soen341-project-w26.onrender.com";
     return stored;
   } catch (e) {
-    return "http://localhost:4000";
+    return "https://thevibecoders-soen341-project-w26.onrender.com";
   }
 })();
 

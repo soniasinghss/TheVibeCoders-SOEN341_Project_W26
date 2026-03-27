@@ -2,7 +2,7 @@
 const API_BASE_CANDIDATES = Array.from(
   new Set([
     window.location.origin,
-    "http://localhost:4000",
+    "https://thevibecoders-soen341-project-w26.onrender.com",
     "http://127.0.0.1:4000",
     "http://localhost:4001",
     "http://127.0.0.1:4001",

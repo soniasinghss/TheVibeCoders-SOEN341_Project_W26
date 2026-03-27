@@ -28,11 +28,11 @@ beforeAll(async () => {
 
   await request(app)
     .post("/auth/register")
-    .send({ email: "chef@example.com", password: "Password1" });
+    .send({ email: "chef@example.com", password: "Password1", firstName: "Test", lastName: "Chef" });
 
   const res = await request(app)
     .post("/auth/login")
-    .send({ email: "chef@example.com", password: "Password1" });
+    .send({ email: "chef@example.com", password: "Password1", firstName: "Test", lastName: "Chef" });
 
   userId = res.body.user.id;
 });

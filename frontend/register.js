@@ -8,7 +8,7 @@ const emailError = document.getElementById("emailError");
 const passwordError = document.getElementById("passwordError");
 const msg = document.getElementById("msg");
 
-const API_URL = "http://localhost:4000/auth/register";
+const API_URL = "https://thevibecoders-soen341-project-w26.onrender.com/auth/register";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

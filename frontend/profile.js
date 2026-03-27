@@ -43,7 +43,7 @@ if (!token) {
   console.log('token:', token);
   console.log('decoded token payload:', decoded);
 
-  fetch('http://localhost:4000/users/me', {
+  fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(async res => {
@@ -128,7 +128,7 @@ function setupEditMode() {
       .join(', ');
 
     try {
-      const res = await fetch('http://localhost:4000/users/me', {
+      const res = await fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -205,7 +205,7 @@ function setupNameEditMode() {
     }
 
     try {
-      const res = await fetch('http://localhost:4000/users/me', {
+      const res = await fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -368,7 +368,7 @@ function setupAllergiesEditMode() {
     const allergiesString = allergyTags.join(', ');
 
     try {
-      const res = await fetch('http://localhost:4000/users/me', {
+      const res = await fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

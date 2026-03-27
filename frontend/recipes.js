@@ -14,11 +14,11 @@ const clearBtn = document.getElementById('clearBtn');
 const API_BASE = (() => {
   try {
     const stored = localStorage.getItem('apiBase');
-    if (!stored) return 'http://localhost:4000';
-    if (stored.includes(':3000')) return 'http://localhost:4000';
+    if (!stored) return 'https://thevibecoders-soen341-project-w26.onrender.com';
+    if (stored.includes(':3000')) return 'https://thevibecoders-soen341-project-w26.onrender.com';
     return stored;
   } catch (e) {
-    return 'http://localhost:4000';
+    return 'https://thevibecoders-soen341-project-w26.onrender.com';
   }
 })();
 
@@ -148,11 +148,11 @@ async function loadRecipes() {
     try {
       j = await res.json();
     } catch (e) {
-      res = await fetch(`http://localhost:4000/recipes${qs ? `?${qs}` : ''}`);
+      res = await fetch(`https://thevibecoders-soen341-project-w26.onrender.com/recipes${qs ? `?${qs}` : ''}`);
       try {
         j = await res.json();
       } catch (e2) {
-        setMessage('Backend response is not JSON. Check that backend is running on http://localhost:4000.', false);
+        setMessage('Backend response is not JSON. Check that backend is running on https://thevibecoders-soen341-project-w26.onrender.com.', false);
         return;
       }
     }

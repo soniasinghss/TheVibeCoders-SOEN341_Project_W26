@@ -33,7 +33,7 @@ describe("POST /auth/register", () => {
   test("1.3 registers a new user successfully", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ email: "test@example.com", password: "Password1" });
+      .send({ email: "test@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(201);
     expect(res.body.message).toBe("User registered successfully.");
@@ -43,7 +43,7 @@ describe("POST /auth/register", () => {
   test("1.4 does not return passwordHash in response", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ email: "test@example.com", password: "Password1" });
+      .send({ email: "test@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.body.user.password).toBeUndefined();
     expect(res.body.user.passwordHash).toBeUndefined();
@@ -52,11 +52,11 @@ describe("POST /auth/register", () => {
   test("1.5 returns 409 for duplicate email", async () => {
     await request(app)
       .post("/auth/register")
-      .send({ email: "dupe@example.com", password: "Password1" });
+      .send({ email: "dupe@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     const res = await request(app)
       .post("/auth/register")
-      .send({ email: "dupe@example.com", password: "Password1" });
+      .send({ email: "dupe@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/already registered/i);
@@ -65,7 +65,7 @@ describe("POST /auth/register", () => {
   test("1.5 returns 400 when email is missing", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ password: "Password1" });
+      .send({ password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBeDefined();
@@ -83,7 +83,7 @@ describe("POST /auth/register", () => {
   test("1.5 returns 400 for invalid email format", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ email: "notanemail", password: "Password1" });
+      .send({ email: "notanemail", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/invalid email/i);
@@ -110,7 +110,7 @@ describe("POST /auth/register", () => {
   test("1.5 returns 400 for empty email string", async () => {
     const res = await request(app)
       .post("/auth/register")
-      .send({ email: "   ", password: "Password1" });
+      .send({ email: "   ", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(400);
   });
@@ -124,13 +124,13 @@ describe("POST /auth/login", () => {
   beforeEach(async () => {
     await request(app)
       .post("/auth/register")
-      .send({ email: "login@example.com", password: "Password1" });
+      .send({ email: "login@example.com", password: "Password1", firstName: "Test", lastName: "User" });
   });
 
   test("2.2 logs in successfully and returns a token", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "login@example.com", password: "Password1" });
+      .send({ email: "login@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(200);
     expect(res.body.token).toBeDefined();
@@ -139,7 +139,7 @@ describe("POST /auth/login", () => {
   test("2.3 returns user info on successful login", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "login@example.com", password: "Password1" });
+      .send({ email: "login@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.body.user).toBeDefined();
     expect(res.body.user.email).toBe("login@example.com");
@@ -149,7 +149,7 @@ describe("POST /auth/login", () => {
   test("2.3 does not return passwordHash in login response", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "login@example.com", password: "Password1" });
+      .send({ email: "login@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.body.user.passwordHash).toBeUndefined();
   });
@@ -157,7 +157,7 @@ describe("POST /auth/login", () => {
   test("2.4 returns a JWT token on login", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "login@example.com", password: "Password1" });
+      .send({ email: "login@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.body.token).toMatch(/^[\w-]+\.[\w-]+\.[\w-]+$/);
   });
@@ -174,7 +174,7 @@ describe("POST /auth/login", () => {
   test("2.7 returns 401 for non-existent email", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "nobody@example.com", password: "Password1" });
+      .send({ email: "nobody@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(401);
     expect(res.body.error).toMatch(/invalid/i);
@@ -183,7 +183,7 @@ describe("POST /auth/login", () => {
   test("2.7 returns 400 when email is missing", async () => {
     const res = await request(app)
       .post("/auth/login")
-      .send({ password: "Password1" });
+      .send({ password: "Password1", firstName: "Test", lastName: "User" });
 
     expect(res.status).toBe(400);
   });
@@ -206,11 +206,11 @@ describe("GET /users/me", () => {
   beforeEach(async () => {
     await request(app)
       .post("/auth/register")
-      .send({ email: "profile@example.com", password: "Password1" });
+      .send({ email: "profile@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "profile@example.com", password: "Password1" });
+      .send({ email: "profile@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     token = res.body.token;
   });
@@ -255,11 +255,11 @@ describe("PUT /users/me", () => {
   beforeEach(async () => {
     await request(app)
       .post("/auth/register")
-      .send({ email: "prefs@example.com", password: "Password1" });
+      .send({ email: "prefs@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     const res = await request(app)
       .post("/auth/login")
-      .send({ email: "prefs@example.com", password: "Password1" });
+      .send({ email: "prefs@example.com", password: "Password1", firstName: "Test", lastName: "User" });
 
     token = res.body.token;
   });
