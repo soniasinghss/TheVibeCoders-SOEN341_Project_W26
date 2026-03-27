@@ -20,7 +20,7 @@ export default function requireAuth(req, res, next) {
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     // keep only small useful info on req.user
-    req.user = { id: payload.uid, email: payload.email };
+    req.user = { id: payload.id, email: payload.email };
     return next();
   } catch (err) {
     return res.status(401).json({ error: "Token invalid or expired" });

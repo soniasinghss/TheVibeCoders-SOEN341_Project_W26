@@ -1,11 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import jsonWebToken from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { isValidEmail, isValidPassword } from "../validation.js";
 
 const router = express.Router();
 
-// Register route
+// POST /auth/register
 router.post("/register", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -14,7 +15,8 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "First name, last name, email and password are required." });
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    email = String(email).trim().toLowerCase();
+    password = String(password);
 
     const user = await User.create({
       firstName,
@@ -28,46 +30,57 @@ router.post("/register", async (req, res) => {
       user: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
     });
   } catch (err) {
+    console.error(err);
     if (err?.code === 11000) {
       return res.status(409).json({ error: "Email already registered." });
     }
-    console.error(err);
     return res.status(500).json({ error: "Server error." });
   }
 });
 
+// POST /auth/login ✅ NEW
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Please provide email and password." });
+    if (email == null || password == null) {
+      return res.status(400).json({ error: "Email and password are required." });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    email = String(email).trim().toLowerCase();
+    password = String(password);
+
+    if (email === "" || password === "") {
+      return res.status(400).json({ error: "Email and password cannot be empty." });
+    }
+
+    const user = await User.findOne({ email });
     if (!user) {
-      // do not reveal whether the email exists
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) {
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
-    if (!process.env.JWT_SECRET) {
-      console.error("Missing JWT_SECRET in environment");
-      return res.status(500).json({ error: "Server configuration issue." });
-    }
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    // create a compact token, keep payload small
-    const payload = { uid: user._id.toString(), email: user.email };
-    const token = jsonWebToken.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-    return res.json({ message: "Logged in.", token, user: { id: user._id, email: user.email } });
+    return res.status(200).json({
+      message: "Login successful.",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+      }
+    });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Something went wrong." });
+    return res.status(500).json({ error: "Server error." });
   }
 });
 
