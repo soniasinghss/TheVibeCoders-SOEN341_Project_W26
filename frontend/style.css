@@ -66,6 +66,10 @@ body.auth-page::before {
   box-shadow: 0 20px 40px rgba(23, 51, 38, 0.15);
 }
 
+.card h1 {
+  color: var(--primary);
+}
+
 .card h2 {
   text-align: center;
   margin-bottom: 28px;

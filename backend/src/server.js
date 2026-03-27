@@ -14,6 +14,8 @@ async function start() {
 
   await mongoose.connect(process.env.MONGO_URI);
   console.log("Connected to MongoDB ✅");
+  console.log(`Frontend directory: ${frontendDir}`);
+  console.log(`login.html exists: ${fs.existsSync(loginHtmlPath)}`);
 
   app.listen(PORT, () => {
     console.log(`Backend running on http://localhost:${PORT}`);

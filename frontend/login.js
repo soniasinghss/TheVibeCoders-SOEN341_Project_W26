@@ -35,6 +35,9 @@ form.addEventListener('submit', async (ev) => {
     if (payload.user && payload.user.email) {
       localStorage.setItem('userEmail', payload.user.email);
     }
+    if (payload.user && payload.user.id) {
+      localStorage.setItem('userId', payload.user.id);
+    }
 
     // go to protected area
     window.location.href = './protected.html';

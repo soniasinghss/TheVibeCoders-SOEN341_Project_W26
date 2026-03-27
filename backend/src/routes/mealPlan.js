@@ -1,206 +1,386 @@
-console.log("mealPlan.js loaded ✅");
-// backend/src/routes/mealPlan.js
 import express from "express";
-import MealPlanEntry from "../models/Mealplan.js";
+import mongoose from "mongoose";
+import Mealplan from "../models/Mealplan.js";
 import Recipe from "../models/Recipe.js";
 
 const router = express.Router();
 
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DAYS = [
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+	"Sunday",
+];
+
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
 
-// Helper: compute ISO week id from a Date, e.g. "2026-W12"
-function getWeekId(date = new Date()) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
-  const week1 = new Date(d.getFullYear(), 0, 4);
-  const weekNum =
-    Math.round(
-      ((d - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
-    ) + 1;
-  return `${d.getFullYear()}-W${String(weekNum).padStart(2, "0")}`;
+function isValidObjectId(id) {
+	return mongoose.Types.ObjectId.isValid(id);
 }
 
-/**
- * GET /meal-plan?weekId=2026-W12
- * Returns all meal plan entries for a given user and week.
- * If no weekId is provided, defaults to the current week.
- */
+function mapEntry(entry) {
+	const recipeDoc = entry.recipeId;
+	const recipe = recipeDoc
+		? {
+				_id: recipeDoc._id,
+				name: recipeDoc.name,
+			}
+		: null;
+
+	return {
+		_id: entry._id,
+		userId: entry.userId,
+		recipe,
+		recipeId: recipe?._id ?? null,
+		day: entry.day,
+		mealType: entry.mealType,
+		weekId: entry.weekId,
+		plannedDateTime: entry.plannedDateTime,
+		servings: entry.servings,
+		createdAt: entry.createdAt,
+		updatedAt: entry.updatedAt,
+	};
+}
+
+async function isDuplicateMeal(userId, recipeId, weekId, excludeId = null) {
+	const query = { userId, recipeId, weekId };
+	if (excludeId) {
+		query._id = { $ne: excludeId };
+	}
+	const existing = await Mealplan.exists(query);
+	return Boolean(existing);
+}
+
 router.get("/", async (req, res) => {
-  try {
-    const { userId, weekId } = req.query;
+	try {
+		const { userId, weekId } = req.query;
 
-    if (!userId || String(userId).trim() === "") {
-      return res.status(400).json({
-        success: false,
-        error: "userId is required.",
-      });
-    }
+		if (!userId || !weekId) {
+			return res.status(400).json({
+				success: false,
+				error: "userId and weekId are required.",
+			});
+		}
 
-    const resolvedWeekId = weekId && String(weekId).trim() !== "" ? weekId : getWeekId();
+		if (!isValidObjectId(userId)) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid userId.",
+			});
+		}
 
-    const entries = await MealPlanEntry.find({
-      user: userId,
-      weekId: resolvedWeekId,
-    }).populate("recipe", "name prepTime difficulty cost dietaryTags");
+		const entries = await Mealplan.find({ userId, weekId })
+			.populate("recipeId", "name")
+			.sort({ day: 1, mealType: 1 })
+			.lean();
 
-    return res.status(200).json({
-      success: true,
-      message: "Meal plan fetched successfully.",
-      weekId: resolvedWeekId,
-      count: entries.length,
-      data: entries,
-    });
-  } catch (err) {
-    console.error("Unexpected server error (GET /meal-plan):", err);
-    return res.status(500).json({
-      success: false,
-      error: "Something went wrong while fetching the meal plan.",
-    });
-  }
+		return res.json({
+			success: true,
+			data: entries.map(mapEntry),
+		});
+	} catch (err) {
+		console.error("Error fetching meal plan:", err);
+		return res.status(500).json({
+			success: false,
+			error: "Something went wrong while fetching meal plan.",
+		});
+	}
 });
 
-/**
- * POST /meal-plan
- * Assigns a recipe to a meal slot (day + mealType) for a given week.
- * Body: { userId, recipeId, day, mealType, weekId? }
- */
 router.post("/", async (req, res) => {
-  try {
-    const { userId, recipeId, day, mealType, weekId } = req.body ?? {};
+	try {
+		const {
+			userId,
+			recipeId,
+			day,
+			mealType,
+			weekId,
+			plannedDateTime,
+			servings,
+		} = req.body ?? {};
 
-    // VALIDATION
-    if (!userId || String(userId).trim() === "") {
-      return res.status(400).json({
-        success: false,
-        error: "userId is required.",
-      });
-    }
+		if (!userId || !recipeId || !day || !mealType || !weekId) {
+			return res.status(400).json({
+				success: false,
+				error: "userId, recipeId, day, mealType, and weekId are required.",
+			});
+		}
 
-    if (!recipeId || String(recipeId).trim() === "") {
-      return res.status(400).json({
-        success: false,
-        error: "recipeId is required.",
-      });
-    }
+		if (!isValidObjectId(userId) || !isValidObjectId(recipeId)) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid userId or recipeId.",
+			});
+		}
 
-    // AC: user cannot submit without selecting both a day and a meal type
-    if (!day || String(day).trim() === "") {
-      return res.status(400).json({
-        success: false,
-        error: "day is required.",
-      });
-    }
+		if (!DAYS.includes(day)) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid day.",
+			});
+		}
 
-    if (!mealType || String(mealType).trim() === "") {
-      return res.status(400).json({
-        success: false,
-        error: "mealType is required.",
-      });
-    }
+		if (!MEAL_TYPES.includes(String(mealType).toLowerCase())) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid meal type.",
+			});
+		}
 
-    if (!DAYS.includes(day)) {
-      return res.status(400).json({
-        success: false,
-        error: `day must be one of: ${DAYS.join(", ")}.`,
-      });
-    }
+		const recipeExists = await Recipe.exists({ _id: recipeId });
+		if (!recipeExists) {
+			return res.status(404).json({
+				success: false,
+				error: "Recipe not found.",
+			});
+		}
 
-    if (!MEAL_TYPES.includes(mealType)) {
-      return res.status(400).json({
-        success: false,
-        error: `mealType must be one of: ${MEAL_TYPES.join(", ")}.`,
-      });
-    }
+		const duplicate = await isDuplicateMeal(userId, recipeId, weekId);
+		if (duplicate) {
+			return res.status(409).json({
+				success: false,
+				error: "This meal is already planned for this week. Please choose a different meal.",
+			});
+		}
 
-    // Confirm recipe exists
-    const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      return res.status(404).json({
-        success: false,
-        error: "Recipe not found.",
-      });
-    }
+		let normalizedServings = 1;
+		if (servings !== undefined) {
+			const parsedServings = Number(servings);
+			if (!Number.isInteger(parsedServings) || parsedServings < 1) {
+				return res.status(400).json({
+					success: false,
+					error: "servings must be an integer greater than 0.",
+				});
+			}
+			normalizedServings = parsedServings;
+		}
 
-    const resolvedWeekId = weekId && String(weekId).trim() !== "" ? weekId : getWeekId();
+		let normalizedDateTime = null;
+		if (plannedDateTime) {
+			const parsedDateTime = new Date(plannedDateTime);
+			if (Number.isNaN(parsedDateTime.getTime())) {
+				return res.status(400).json({
+					success: false,
+					error: "plannedDateTime is invalid.",
+				});
+			}
+			normalizedDateTime = parsedDateTime;
+		}
 
-    // TA-16.4: Duplicate prevention — check before inserting
-    const existing = await MealPlanEntry.findOne({
-      user: userId,
-      day,
-      mealType,
-      weekId: resolvedWeekId,
-    });
+		const entry = await Mealplan.create({
+			userId,
+			recipeId,
+			day,
+			mealType: String(mealType).toLowerCase(),
+			weekId,
+			plannedDateTime: normalizedDateTime,
+			servings: normalizedServings,
+		});
 
-    if (existing) {
-      return res.status(409).json({
-        success: false,
-        error: `You already have a meal planned for ${day} ${mealType} this week.`,
-      });
-    }
+		const populated = await Mealplan.findById(entry._id).populate("recipeId", "name").lean();
 
-    const entry = await MealPlanEntry.create({
-      user: userId,
-      recipe: recipeId,
-      day,
-      mealType,
-      weekId: resolvedWeekId,
-    });
+		return res.status(201).json({
+			success: true,
+			message: "Meal added to planner.",
+			data: mapEntry(populated),
+		});
+	} catch (err) {
+		if (err?.code === 11000) {
+			return res.status(409).json({
+				success: false,
+				error: "A meal is already planned for this day and meal slot.",
+			});
+		}
 
-    await entry.populate("recipe", "name prepTime difficulty cost dietaryTags");
-
-    // AC: confirmation message shown after meal is successfully added
-    return res.status(201).json({
-      success: true,
-      message: `${recipe.name} added to ${day} ${mealType} successfully.`,
-      data: entry,
-    });
-  } catch (err) {
-    // Fallback: catch MongoDB duplicate key error from the unique index
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        error: "A meal is already planned for that slot this week.",
-      });
-    }
-    console.error("Unexpected server error (POST /meal-plan):", err);
-    return res.status(500).json({
-      success: false,
-      error: "Something went wrong while adding the meal.",
-    });
-  }
+		console.error("Error creating meal plan entry:", err);
+		return res.status(500).json({
+			success: false,
+			error: "Something went wrong while adding meal to planner.",
+		});
+	}
 });
 
-/**
- * DELETE /meal-plan/:id
- * Removes a meal plan entry by its ID.
- */
+router.put("/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		if (!isValidObjectId(id)) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid meal plan entry id.",
+			});
+		}
+
+		const entry = await Mealplan.findById(id);
+		if (!entry) {
+			return res.status(404).json({
+				success: false,
+				error: "Meal plan entry not found.",
+			});
+		}
+
+		const {
+			recipeId,
+			day,
+			mealType,
+			weekId,
+			plannedDateTime,
+			servings,
+		} = req.body ?? {};
+
+		if (recipeId !== undefined) {
+			if (!isValidObjectId(recipeId)) {
+				return res.status(400).json({
+					success: false,
+					error: "Invalid recipeId.",
+				});
+			}
+			const recipeExists = await Recipe.exists({ _id: recipeId });
+			if (!recipeExists) {
+				return res.status(404).json({
+					success: false,
+					error: "Recipe not found.",
+				});
+			}
+			entry.recipeId = recipeId;
+		}
+
+		if (day !== undefined) {
+			if (!DAYS.includes(day)) {
+				return res.status(400).json({
+					success: false,
+					error: "Invalid day.",
+				});
+			}
+			entry.day = day;
+		}
+
+		if (mealType !== undefined) {
+			const normalizedMealType = String(mealType).toLowerCase();
+			if (!MEAL_TYPES.includes(normalizedMealType)) {
+				return res.status(400).json({
+					success: false,
+					error: "Invalid meal type.",
+				});
+			}
+			entry.mealType = normalizedMealType;
+		}
+
+		if (weekId !== undefined) {
+			if (!String(weekId).trim()) {
+				return res.status(400).json({
+					success: false,
+					error: "weekId cannot be empty.",
+				});
+			}
+			entry.weekId = String(weekId).trim();
+		}
+
+		if (servings !== undefined) {
+			const parsedServings = Number(servings);
+			if (!Number.isInteger(parsedServings) || parsedServings < 1) {
+				return res.status(400).json({
+					success: false,
+					error: "servings must be an integer greater than 0.",
+				});
+			}
+			entry.servings = parsedServings;
+		}
+
+		if (plannedDateTime !== undefined) {
+			if (plannedDateTime === null || plannedDateTime === "") {
+				entry.plannedDateTime = null;
+			} else {
+				const parsedDateTime = new Date(plannedDateTime);
+				if (Number.isNaN(parsedDateTime.getTime())) {
+					return res.status(400).json({
+						success: false,
+						error: "plannedDateTime is invalid.",
+					});
+				}
+				entry.plannedDateTime = parsedDateTime;
+			}
+		}
+
+		const duplicate = await isDuplicateMeal(entry.userId, entry.recipeId, entry.weekId, entry._id);
+		if (duplicate) {
+			return res.status(409).json({
+				success: false,
+				error: "This meal is already planned for this week. Please choose a different meal.",
+			});
+		}
+
+		const slotConflict = await Mealplan.findOne({
+			_id: { $ne: entry._id },
+			userId: entry.userId,
+			weekId: entry.weekId,
+			day: entry.day,
+			mealType: entry.mealType,
+		}).lean();
+
+		if (slotConflict) {
+			return res.status(409).json({
+				success: false,
+				error: "Another meal is already planned in that slot.",
+			});
+		}
+
+		await entry.save();
+		const populated = await Mealplan.findById(entry._id).populate("recipeId", "name").lean();
+
+		return res.json({
+			success: true,
+			message: "Meal updated successfully.",
+			data: mapEntry(populated),
+		});
+	} catch (err) {
+		if (err?.code === 11000) {
+			return res.status(409).json({
+				success: false,
+				error: "Another meal is already planned in that slot.",
+			});
+		}
+
+		console.error("Error updating meal plan entry:", err);
+		return res.status(500).json({
+			success: false,
+			error: "Something went wrong while updating meal in planner.",
+		});
+	}
+});
+
 router.delete("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
+	try {
+		const { id } = req.params;
 
-    const deleted = await MealPlanEntry.findByIdAndDelete(id);
+		if (!isValidObjectId(id)) {
+			return res.status(400).json({
+				success: false,
+				error: "Invalid meal plan entry id.",
+			});
+		}
 
-    if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        error: "Meal plan entry not found.",
-      });
-    }
+		const deleted = await Mealplan.findByIdAndDelete(id).lean();
+		if (!deleted) {
+			return res.status(404).json({
+				success: false,
+				error: "Meal plan entry not found.",
+			});
+		}
 
-    return res.json({
-      success: true,
-      message: "Meal removed from plan successfully.",
-      data: deleted,
-    });
-  } catch (err) {
-    console.error("Unexpected server error (DELETE /meal-plan/:id):", err);
-    return res.status(500).json({
-      success: false,
-      error: "Something went wrong while removing the meal.",
-    });
-  }
+		return res.json({
+			success: true,
+			message: "Meal removed from planner.",
+		});
+	} catch (err) {
+		console.error("Error deleting meal plan entry:", err);
+		return res.status(500).json({
+			success: false,
+			error: "Something went wrong while removing meal from planner.",
+		});
+	}
 });
 
 export default router;

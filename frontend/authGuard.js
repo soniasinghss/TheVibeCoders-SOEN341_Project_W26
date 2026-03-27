@@ -11,6 +11,7 @@
 window.logoutUser = function () {
 	localStorage.removeItem('token');
 	localStorage.removeItem('userEmail');
+	localStorage.removeItem('userId');
 	// give a very brief visual cue before redirecting
 	setTimeout(() => window.location.replace('./login.html'), 50);
 };
