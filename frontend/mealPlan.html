@@ -30,7 +30,24 @@
         <tbody id="gridBody"></tbody>
       </table>
     </div>
+
+    <div class="generate-section">
+      <div class="generate-input-group">
+        <input 
+          type="text" 
+          id="generateInput" 
+          class="generate-input"
+          placeholder="e.g., 'quick meals for Monday and Tuesday' or 'cheap vegan recipes' or 'all week dinner'"
+          aria-label="AI meal generation input"
+        />
+        <button id="generatePlanBtn" class="btn-primary">Generate Meals</button>
+      </div>
+      <div id="generatemsg" class="success"></div>
+      <div id="generateErrorMsg" class="error"></div>
+      <pre id="recipeOutput" class="recipe-output hidden" aria-live="polite"></pre>
+    </div>
   </div>
+
 
   <dialog id="addMealModal" class="modal">
     <div class="modal-content">
