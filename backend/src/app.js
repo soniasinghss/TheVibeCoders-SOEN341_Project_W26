@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.js";
 import recipesRoutes from "./routes/recipes.js";
 import userRouter from "./routes/users.js";
 import mealPlanRoutes from "./routes/mealPlan.js";
+import aiRoutes from "./routes/ai.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/auth", authRoutes);
 app.use("/recipes", recipesRoutes);
 app.use("/users", userRouter);
 app.use("/meal-plan", mealPlanRoutes);
+app.use("/ai", aiRoutes);
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 export default app;

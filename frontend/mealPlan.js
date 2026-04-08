@@ -1,9 +1,8 @@
 // frontend/mealPlan.js
 const API_BASE_CANDIDATES = Array.from(
   new Set([
-    window.location.origin,
-    "https://thevibecoders-soen341-project-w26.onrender.com",
     "http://127.0.0.1:4000",
+    "http://localhost:4000",
     "http://localhost:4001",
     "http://127.0.0.1:4001",
   ])
@@ -67,6 +66,7 @@ const cancelBtn   = document.getElementById("cancelModal");
 const msgEl       = document.getElementById("msg");
 const errorMsgEl  = document.getElementById("errorMsg");
 const modalErrorMsgEl = document.getElementById("modalErrorMsg");
+const recipeOutputEl = document.getElementById("recipeOutput");
 
 // Populate static selectors once
 for (const day of DAYS) {
@@ -396,7 +396,100 @@ function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+// ── Smart AI-powered meal generation ──
+async function generateWeeklyPlan() {
+  const userId = getUserId();
+  if (!userId) {
+    showToast("Not logged in.", true);
+    return;
+  }
+
+  const generateBtn = document.getElementById("generatePlanBtn");
+  const generateInput = document.getElementById("generateInput");
+  const generateErrorMsg = document.getElementById("generateErrorMsg");
+  const generatemsg = document.getElementById("generatemsg");
+  
+  const inputText = generateInput?.value?.trim() || "";
+  
+  if (!inputText) {
+    showToast("Please enter what kind of meals you'd like to generate.", true);
+    generateErrorMsg.textContent = "Please enter what kind of meals you'd like to generate.";
+    return;
+  }
+
+  generateBtn.disabled = true;
+  generateInput.disabled = true;
+  generateErrorMsg.textContent = "";
+  generatemsg.textContent = "";
+  if (recipeOutputEl) {
+    recipeOutputEl.textContent = "";
+    recipeOutputEl.classList.add("hidden");
+  }
+
+  try {
+    const res = await fetchWithApiFallback("/ai/generate-and-assign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        prompt: inputText,
+        weekId: getWeekId(currentWeekOffset),
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      showToast(data.error || "Failed to generate plan.", true);
+      generateErrorMsg.textContent = data.error || "Failed to generate plan.";
+      return;
+    }
+
+    if (data.mode === "recipe_only" && data.recipe) {
+      const summary = data.recipe.summary || "Recipe details unavailable.";
+      if (recipeOutputEl) {
+        recipeOutputEl.textContent = summary;
+        recipeOutputEl.classList.remove("hidden");
+      }
+      const recipeMessage = data.message || "Recipe details ready.";
+      showToast(recipeMessage);
+      generatemsg.textContent = recipeMessage;
+      return;
+    }
+
+    const message = data.message || "Meals generated.";
+    showToast(message);
+    generatemsg.textContent = message;
+    generateInput.value = "";
+    await loadMealPlan();
+
+  } catch (err) {
+    console.error("Generation error:", err);
+    showToast("Failed to generate plan.", true);
+    generateErrorMsg.textContent = `Failed to generate plan using ${activeApiBase}. Please ensure local backend is running on http://127.0.0.1:4000.`;
+  } finally {
+    generateBtn.disabled = false;
+    generateInput.disabled = false;
+  }
+}
+
+
 // ── Init — render grid immediately, then fetch data ──
 renderGrid(); // shows the grid skeleton right away
 loadRecipes();
 loadMealPlan();
+
+const generateBtn = document.getElementById("generatePlanBtn");
+const generateInput = document.getElementById("generateInput");
+
+if (generateBtn) {
+  generateBtn.addEventListener("click", generateWeeklyPlan);
+}
+
+if (generateInput) {
+  generateInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      generateWeeklyPlan();
+    }
+  });
+}
