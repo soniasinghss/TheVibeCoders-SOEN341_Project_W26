@@ -628,10 +628,6 @@ async function findOrCreateRecipeByName(recipeName) {
   return saved.recipe;
 }
 
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -675,7 +671,7 @@ router.post("/generate-and-assign", async (req, res) => {
   try {
     const { userId, prompt, weekId } = req.body ?? {};
 
-    if (!userId || !prompt) {
+    if (!userId || !prompt || typeof prompt !== "string") {
       return res.status(400).json({ success: false, error: "userId and prompt are required." });
     }
 
@@ -725,7 +721,7 @@ router.post("/generate-and-assign", async (req, res) => {
     if (isRecipeOnlyPrompt(prompt)) {
       const recipeQuery = extractRecipeNameFromPrompt(prompt);
       const inDb = await Recipe.findOne({
-        name: { $regex: recipeQuery.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&"), $options: "i" },
+        name: { $regex: recipeQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" },
       }).lean();
 
       if (inDb) {

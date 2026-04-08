@@ -80,6 +80,11 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not configured");
+      return res.status(500).json({ error: "Server config issue." });
+    }
+
     const token = jwt.sign(
       { id: user.id },
       process.env.JWT_SECRET,

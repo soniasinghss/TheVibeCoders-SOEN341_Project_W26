@@ -48,7 +48,7 @@ router.put("/me", requireAuth, async (req, res) => {
             if (typeof allergies === 'string') {
                 const allergyArray = allergies.split(',')
                     .map(a => a.trim())
-                    .filter(a => a); // Remove empty strings
+                    .filter(Boolean); // Remove empty strings
                 
                 // Remove duplicates (case-insensitive)
                 const uniqueAllergies = [...new Map(
@@ -60,7 +60,7 @@ router.put("/me", requireAuth, async (req, res) => {
         }
 
         await user.save();
-        res.json({ message: "Profile updated successfully", user: { name: user.name, firstName: user.firstName, lastName: user.lastName, email: user.email, dietPreferences: user.dietPreferences, allergies: user.allergies } });
+        res.json({ message: "Profile updated successfully", user: { firstName: user.firstName, lastName: user.lastName, email: user.email, dietPreferences: user.dietPreferences, allergies: user.allergies } });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to update profile." });
