@@ -119,7 +119,7 @@ function renderRecipes(arr) {
     actions.className = 'recipe-actions';
 
     const editLink = document.createElement('a');
-    editLink.href = `editRecipe.html?id=${r._id}`;
+    editLink.href = `edit-recipe.html?id=${r._id}`;
     editLink.textContent = 'Edit';
     editLink.className = 'btn-primary action-link';
     actions.appendChild(editLink);

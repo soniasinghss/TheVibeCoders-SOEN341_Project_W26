@@ -1,4 +1,4 @@
-// frontend/mealPlan.js
+// frontend/meal-plan.js
 const API_BASE_CANDIDATES = Array.from(
   new Set([
     window.location.origin,

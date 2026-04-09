@@ -78,6 +78,28 @@ Each sprint includes planning, development, and review.
 
 ---
 
+## Naming Convention Standard
+
+This project enforces the following naming rules:
+
+- `camelCase` for JavaScript variables, functions, object fields, and HTML ids.
+- `PascalCase` for model/entity/class names only.
+- `kebab-case` for file names and CSS class names.
+- `UPPER_SNAKE_CASE` for true constants and environment keys.
+
+### Local check
+
+Run naming checks from the backend folder:
+
+```bash
+cd backend
+npm run check:naming
+```
+
+The same naming check is also enforced in CI.
+
+---
+
 ## How to Run  
 
 ### Requirements  

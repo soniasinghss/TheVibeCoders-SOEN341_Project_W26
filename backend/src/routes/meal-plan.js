@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
-import Mealplan from "../models/Mealplan.js";
-import Recipe from "../models/Recipe.js";
+import MealPlan from "../models/meal-plan.js";
+import Recipe from "../models/recipe.js";
 
 const router = express.Router();
 
@@ -63,7 +63,7 @@ router.get("/", async (req, res) => {
 			});
 		}
 
-		const entries = await Mealplan.find({ userId, weekId })
+		const entries = await MealPlan.find({ userId, weekId })
 			.populate("recipeId", "name")
 			.sort({ day: 1, mealType: 1 })
 			.lean();
@@ -153,7 +153,7 @@ router.post("/", async (req, res) => {
 			normalizedDateTime = parsedDateTime;
 		}
 
-		const entry = await Mealplan.create({
+		const entry = await MealPlan.create({
 			userId,
 			recipeId,
 			day,
@@ -163,7 +163,7 @@ router.post("/", async (req, res) => {
 			servings: normalizedServings,
 		});
 
-		const populated = await Mealplan.findById(entry._id).populate("recipeId", "name").lean();
+		const populated = await MealPlan.findById(entry._id).populate("recipeId", "name").lean();
 
 		return res.status(201).json({
 			success: true,
@@ -196,7 +196,7 @@ router.put("/:id", async (req, res) => {
 			});
 		}
 
-		const entry = await Mealplan.findById(id);
+		const entry = await MealPlan.findById(id);
 		if (!entry) {
 			return res.status(404).json({
 				success: false,
@@ -287,7 +287,7 @@ router.put("/:id", async (req, res) => {
 			}
 		}
 
-		const slotConflict = await Mealplan.findOne({
+		const slotConflict = await MealPlan.findOne({
 			_id: { $ne: entry._id },
 			userId: entry.userId,
 			weekId: entry.weekId,
@@ -303,7 +303,7 @@ router.put("/:id", async (req, res) => {
 		}
 
 		await entry.save();
-		const populated = await Mealplan.findById(entry._id).populate("recipeId", "name").lean();
+		const populated = await MealPlan.findById(entry._id).populate("recipeId", "name").lean();
 
 		return res.json({
 			success: true,
@@ -337,7 +337,7 @@ router.delete("/:id", async (req, res) => {
 			});
 		}
 
-		const deleted = await Mealplan.findByIdAndDelete(id).lean();
+		const deleted = await MealPlan.findByIdAndDelete(id).lean();
 		if (!deleted) {
 			return res.status(404).json({
 				success: false,

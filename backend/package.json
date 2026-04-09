@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node src/server.js"
+    "dev": "node src/server.js",
+    "check:naming": "node ../scripts/enforce-naming.mjs"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

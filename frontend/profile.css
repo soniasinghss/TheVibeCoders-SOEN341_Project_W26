@@ -203,7 +203,7 @@ body {
   border: 1px solid var(--secondary);
 }
 
-.remove-allergyBtn {
+.remove-allergy-btn {
   background: none;
   border: none;
   color: var(--secondary-dark);
@@ -218,7 +218,7 @@ body {
   transition: color 0.2s ease;
 }
 
-.remove-allergyBtn:hover {
+.remove-allergy-btn:hover {
   color: var(--primary);
 }
 

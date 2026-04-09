@@ -1,7 +1,7 @@
 console.log("recipes.js loaded ✅");
 // backend/src/routes/recipes.js
 import express from "express";
-import Recipe from "../models/Recipe.js";
+import Recipe from "../models/recipe.js";
 
 const router = express.Router();
 

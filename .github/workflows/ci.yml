@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests (if any)
         run: npm test --if-present
+
+      - name: Enforce naming conventions
+        run: npm run check:naming

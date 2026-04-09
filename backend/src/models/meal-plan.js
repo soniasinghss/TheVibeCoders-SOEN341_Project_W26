@@ -63,6 +63,6 @@ mealPlanSchema.index(
 	{ unique: true }
 );
 
-const Mealplan = mongoose.models.Mealplan || mongoose.model("Mealplan", mealPlanSchema);
+const MealPlan = mongoose.models.MealPlan || mongoose.model("MealPlan", mealPlanSchema);
 
-export default Mealplan;
+export default MealPlan;

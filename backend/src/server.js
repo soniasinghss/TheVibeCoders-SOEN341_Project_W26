@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import recipesRoutes from "./routes/recipes.js"; // ✅ NEW
 import userRouter from "./routes/users.js";
-import mealPlanRoutes from "./routes/mealPlan.js";
+import mealPlanRoutes from "./routes/meal-plan.js";
 
 dotenv.config();
 

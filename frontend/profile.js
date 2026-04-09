@@ -180,12 +180,12 @@ function renderEditableAllergyTags(allergiesString) {
   allergyTagsEditEl.innerHTML = allergies.map(allergy => 
     `<span class="allergy-tag-edit">
       ${allergy}
-      <button class="remove-allergyBtn" type="button" data-allergy="${allergy}">×</button>
+      <button class="remove-allergy-btn" type="button" data-allergy="${allergy}">×</button>
     </span>`
   ).join('');
 
   // Add remove handlers
-  document.querySelectorAll('.remove-allergyBtn').forEach(btn => {
+  document.querySelectorAll('.remove-allergy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.parentElement.remove();
     });
@@ -252,11 +252,11 @@ function setupAllergiesEditMode() {
     newTag.className = 'allergy-tag-edit';
     newTag.innerHTML = `
       ${allergyValue}
-      <button class="remove-allergyBtn" type="button" data-allergy="${allergyValue}">×</button>
+      <button class="remove-allergy-btn" type="button" data-allergy="${allergyValue}">×</button>
     `;
     allergyTagsEditEl.appendChild(newTag);
     
-    newTag.querySelector('.remove-allergyBtn').addEventListener('click', () => {
+    newTag.querySelector('.remove-allergy-btn').addEventListener('click', () => {
       newTag.remove();
     });
     
