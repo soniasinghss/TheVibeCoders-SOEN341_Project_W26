@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setMessage(j.message || "Recipe created successfully.", true);
       setTimeout(() => {
-        window.location.href = "recipes.html";
+        window.location.href = "../html/recipes.html";
       }, 800);
     } catch (err) {
       console.error(err);
