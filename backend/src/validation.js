@@ -4,7 +4,7 @@ export function isValidEmail(email) {
 
 export function isValidPassword(password) {
   return (
-    typeof password === "string" &&
+    typeof password === 'string' &&
     password.length >= 8 &&
     /[A-Za-z]/.test(password) &&
     /\d/.test(password)
