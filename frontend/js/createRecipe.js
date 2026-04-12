@@ -5,45 +5,45 @@ let message;
 
 const API_BASE = (() => {
   try {
-    const stored = localStorage.getItem("apiBase");
-    if (!stored) return "https://thevibecoders-soen341-project-w26.onrender.com";
-    if (stored.includes(":3000")) return "https://thevibecoders-soen341-project-w26.onrender.com";
+    const stored = localStorage.getItem('apiBase');
+    if (!stored) return 'https://thevibecoders-soen341-project-w26.onrender.com';
+    if (stored.includes(':3000')) return 'https://thevibecoders-soen341-project-w26.onrender.com';
     return stored;
   } catch (e) {
-    return "https://thevibecoders-soen341-project-w26.onrender.com";
+    return 'https://thevibecoders-soen341-project-w26.onrender.com';
   }
 })();
 
 function setMessage(text, ok = false) {
   message.textContent = text;
-  message.className = ok ? "success-text" : "error-text";
-  if (!text) message.className = "";
+  message.className = ok ? 'success-text' : 'error-text';
+  if (!text) message.className = '';
 }
 
 function ensureErrorEl(inputEl) {
   const next = inputEl.nextElementSibling;
-  if (next && next.classList.contains("error-text")) return next;
+  if (next && next.classList.contains('error-text')) return next;
 
-  const err = document.createElement("div");
-  err.className = "error-text";
-  err.style.display = "none";
-  inputEl.insertAdjacentElement("afterend", err);
+  const err = document.createElement('div');
+  err.className = 'error-text';
+  err.style.display = 'none';
+  inputEl.insertAdjacentElement('afterend', err);
   return err;
 }
 
 function showError(inputEl, msg) {
-  inputEl.classList.add("field-error");
+  inputEl.classList.add('field-error');
   const err = ensureErrorEl(inputEl);
   err.textContent = msg;
-  err.style.display = "block";
+  err.style.display = 'block';
 }
 
 function clearError(inputEl) {
-  inputEl.classList.remove("field-error");
+  inputEl.classList.remove('field-error');
   const next = inputEl.nextElementSibling;
-  if (next && next.classList.contains("error-text")) {
-    next.textContent = "";
-    next.style.display = "none";
+  if (next && next.classList.contains('error-text')) {
+    next.textContent = '';
+    next.style.display = 'none';
   }
 }
 
@@ -58,8 +58,8 @@ function isNonNegativeNumber(value) {
 }
 
 function createIngredientRow() {
-  const row = document.createElement("div");
-  row.className = "ingredient-row";
+  const row = document.createElement('div');
+  row.className = 'ingredient-row';
 
   row.innerHTML = `
     <div class="ing-col">
@@ -74,14 +74,14 @@ function createIngredientRow() {
     <button type="button" class="remove-btn">Remove</button>
   `;
 
-  row.querySelector(".remove-btn").addEventListener("click", () => {
+  row.querySelector('.remove-btn').addEventListener('click', () => {
     row.remove();
-    setMessage("");
+    setMessage('');
   });
 
-  row.querySelectorAll("input").forEach((inp) => {
-    inp.addEventListener("input", () => clearError(inp));
-    inp.addEventListener("blur", () => validateIngredientRow(row));
+  row.querySelectorAll('input').forEach((inp) => {
+    inp.addEventListener('input', () => clearError(inp));
+    inp.addEventListener('blur', () => validateIngredientRow(row));
   });
 
   return row;
@@ -92,10 +92,10 @@ function addIngredientRow() {
 }
 
 function validateRecipeName() {
-  const el = document.getElementById("recipeName");
+  const el = document.getElementById('recipeName');
   const v = el.value.trim();
   if (!v) {
-    showError(el, "Recipe name is required.");
+    showError(el, 'Recipe name is required.');
     return false;
   }
   clearError(el);
@@ -103,15 +103,15 @@ function validateRecipeName() {
 }
 
 function validatePrepTime() {
-  const el = document.getElementById("prepTime");
+  const el = document.getElementById('prepTime');
   const v = el.value;
 
   if (!v) {
-    showError(el, "Preparation time is required.");
+    showError(el, 'Preparation time is required.');
     return false;
   }
   if (!isPositiveNumber(v)) {
-    showError(el, "Preparation time must be a positive number.");
+    showError(el, 'Preparation time must be a positive number.');
     return false;
   }
   clearError(el);
@@ -119,10 +119,10 @@ function validatePrepTime() {
 }
 
 function validatePrepSteps() {
-  const el = document.getElementById("prepSteps");
+  const el = document.getElementById('prepSteps');
   const v = el.value.trim();
   if (!v) {
-    showError(el, "Preparation steps are required.");
+    showError(el, 'Preparation steps are required.');
     return false;
   }
   clearError(el);
@@ -130,15 +130,15 @@ function validatePrepSteps() {
 }
 
 function validateCost() {
-  const el = document.getElementById("cost");
+  const el = document.getElementById('cost');
   const v = el.value.trim();
 
-  if (v === "") {
+  if (v === '') {
     clearError(el);
     return true;
   }
   if (!isNonNegativeNumber(v)) {
-    showError(el, "Cost must be a valid non-negative number.");
+    showError(el, 'Cost must be a valid non-negative number.');
     return false;
   }
   clearError(el);
@@ -146,9 +146,9 @@ function validateCost() {
 }
 
 function validateIngredientRow(row) {
-  const nameEl = row.querySelector(".ing-name");
-  const qtyEl = row.querySelector(".ing-qty");
-  const unitEl = row.querySelector(".ing-unit");
+  const nameEl = row.querySelector('.ing-name');
+  const qtyEl = row.querySelector('.ing-qty');
+  const unitEl = row.querySelector('.ing-unit');
 
   const name = nameEl.value.trim();
   const qty = qtyEl.value.trim();
@@ -157,24 +157,24 @@ function validateIngredientRow(row) {
   let ok = true;
 
   if (!name) {
-    showError(nameEl, "Ingredient name is required.");
+    showError(nameEl, 'Ingredient name is required.');
     ok = false;
   } else {
     clearError(nameEl);
   }
 
   if (!qty) {
-    showError(qtyEl, "Quantity is required.");
+    showError(qtyEl, 'Quantity is required.');
     ok = false;
   } else if (!isPositiveNumber(qty)) {
-    showError(qtyEl, "Quantity must be a positive number.");
+    showError(qtyEl, 'Quantity must be a positive number.');
     ok = false;
   } else {
     clearError(qtyEl);
   }
 
   if (!unit) {
-    showError(unitEl, "Unit is required.");
+    showError(unitEl, 'Unit is required.');
     ok = false;
   } else {
     clearError(unitEl);
@@ -184,9 +184,9 @@ function validateIngredientRow(row) {
 }
 
 function validateIngredientsSection() {
-  const rows = ingredientsContainer.querySelectorAll(".ingredient-row");
+  const rows = ingredientsContainer.querySelectorAll('.ingredient-row');
   if (rows.length === 0) {
-    setMessage("At least one ingredient is required.", false);
+    setMessage('At least one ingredient is required.', false);
     return false;
   }
 
@@ -196,40 +196,40 @@ function validateIngredientsSection() {
     if (!rowOk) allOk = false;
   });
 
-  if (!allOk) setMessage("Please fix ingredient errors.", false);
+  if (!allOk) setMessage('Please fix ingredient errors.', false);
   return allOk;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  form = document.getElementById("createRecipeForm");
-  ingredientsContainer = document.getElementById("ingredientsContainer");
-  addIngredientBtn = document.getElementById("addIngredientBtn");
-  message = document.getElementById("message");
+document.addEventListener('DOMContentLoaded', () => {
+  form = document.getElementById('createRecipeForm');
+  ingredientsContainer = document.getElementById('ingredientsContainer');
+  addIngredientBtn = document.getElementById('addIngredientBtn');
+  message = document.getElementById('message');
 
-  addIngredientBtn.addEventListener("click", () => {
+  addIngredientBtn.addEventListener('click', () => {
     addIngredientRow();
-    setMessage("");
+    setMessage('');
   });
 
   addIngredientRow();
 
-  ["recipeName", "prepTime", "prepSteps", "cost"].forEach((id) => {
+  ['recipeName', 'prepTime', 'prepSteps', 'cost'].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.addEventListener("input", () => {
+    el.addEventListener('input', () => {
       clearError(el);
-      setMessage("");
+      setMessage('');
     });
   });
 
-  document.getElementById("recipeName").addEventListener("blur", validateRecipeName);
-  document.getElementById("prepTime").addEventListener("blur", validatePrepTime);
-  document.getElementById("prepSteps").addEventListener("blur", validatePrepSteps);
-  document.getElementById("cost").addEventListener("blur", validateCost);
+  document.getElementById('recipeName').addEventListener('blur', validateRecipeName);
+  document.getElementById('prepTime').addEventListener('blur', validatePrepTime);
+  document.getElementById('prepSteps').addEventListener('blur', validatePrepSteps);
+  document.getElementById('cost').addEventListener('blur', validateCost);
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage('');
 
     const okName = validateRecipeName();
     const okIngs = validateIngredientsSection();
@@ -240,49 +240,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const allOk = okName && okIngs && okTime && okSteps && okCost;
     if (!allOk) return;
 
-    const name = document.getElementById("recipeName").value.trim();
-    const prepTime = Number(document.getElementById("prepTime").value);
-    const steps = document.getElementById("prepSteps").value.trim();
-    const costVal = document.getElementById("cost").value.trim();
-    const cost = costVal === "" ? null : Number(costVal);
+    const name = document.getElementById('recipeName').value.trim();
+    const prepTime = Number(document.getElementById('prepTime').value);
+    const steps = document.getElementById('prepSteps').value.trim();
+    const costVal = document.getElementById('cost').value.trim();
+    const cost = costVal === '' ? null : Number(costVal);
 
-    const rows = ingredientsContainer.querySelectorAll(".ingredient-row");
+    const rows = ingredientsContainer.querySelectorAll('.ingredient-row');
     const ingredients = Array.from(rows).map((row) => ({
-      name: row.querySelector(".ing-name").value.trim(),
-      quantity: Number(row.querySelector(".ing-qty").value),
-      unit: row.querySelector(".ing-unit").value.trim(),
+      name: row.querySelector('.ing-name').value.trim(),
+      quantity: Number(row.querySelector('.ing-qty').value),
+      unit: row.querySelector('.ing-unit').value.trim(),
     }));
 
     try {
-      const token = localStorage.getItem("token");
-      const headers = { "Content-Type": "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const token = localStorage.getItem('token');
+      const headers = {'Content-Type': 'application/json'};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const res = await fetch(`${API_BASE}/recipes`, {
-        method: "POST",
+        method: 'POST',
         headers,
-        body: JSON.stringify({ name, ingredients, prepTime, steps, cost }),
+        body: JSON.stringify({name, ingredients, prepTime, steps, cost}),
       });
 
       const j = await res.json().catch(() => ({}));
 
       if (res.status === 400) {
-        setMessage(j.error || "Invalid input.", false);
+        setMessage(j.error || 'Invalid input.', false);
         return;
       }
 
       if (!res.ok) {
-        setMessage(j.error || "Failed to create recipe.", false);
+        setMessage(j.error || 'Failed to create recipe.', false);
         return;
       }
 
-      setMessage(j.message || "Recipe created successfully.", true);
+      setMessage(j.message || 'Recipe created successfully.', true);
       setTimeout(() => {
-        window.location.href = "../html/recipes.html";
+        window.location.href = '../html/recipes.html';
       }, 800);
     } catch (err) {
       console.error(err);
-      setMessage("Server error while creating recipe.", false);
+      setMessage('Server error while creating recipe.', false);
     }
   });
 });

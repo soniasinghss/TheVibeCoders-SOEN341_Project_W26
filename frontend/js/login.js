@@ -15,8 +15,8 @@ form.addEventListener('submit', async (ev) => {
   try {
     const response = await fetch('https://thevibecoders-soen341-project-w26.onrender.com/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pwd }),
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, password: pwd}),
     });
 
     const payload = await response.json();
