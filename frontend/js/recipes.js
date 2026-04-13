@@ -18,6 +18,7 @@ const API_BASE = (() => {
     if (stored.includes(':3000')) return 'https://thevibecoders-soen341-project-w26.onrender.com';
     return stored;
   } catch (e) {
+    console.error(e);
     return 'https://thevibecoders-soen341-project-w26.onrender.com';
   }
 })();
@@ -56,7 +57,7 @@ function buildQueryParams() {
 }
 
 async function deleteRecipeById(recipeId, listItem) {
-  const confirmed = window.confirm('Are you sure you want to delete this recipe?');
+  const confirmed = globalThis.confirm('Are you sure you want to delete this recipe?');
   if (!confirmed) return;
 
   try {
@@ -84,7 +85,7 @@ async function deleteRecipeById(recipeId, listItem) {
     listItem.remove();
     setMessage(j.message || 'Recipe deleted successfully.', true);
     setTimeout(() => {
-      window.location.href = 'protected.html';
+      globalThis.location.href = 'protected.html';
     }, 400);
   } catch (err) {
     console.error(err);
@@ -140,7 +141,8 @@ function renderRecipes(arr) {
 async function loadRecipes() {
   try {
     const qs = buildQueryParams();
-    const url = `${API_BASE}/recipes${qs ? `?${qs}` : ''}`;
+    const query = qs ? '?' + qs : '';
+    const url = `${API_BASE}/recipes${query}`;
 
     let res = await fetch(url);
     let j;
@@ -148,17 +150,20 @@ async function loadRecipes() {
     try {
       j = await res.json();
     } catch (e) {
-      res = await fetch(`https://thevibecoders-soen341-project-w26.onrender.com/recipes${qs ? `?${qs}` : ''}`);
+      console.error(e);
+      const fallbackQuery = qs ? '?' + qs : '';
+      res = await fetch(`https://thevibecoders-soen341-project-w26.onrender.com/recipes${fallbackQuery}`);
       try {
         j = await res.json();
-      } catch (e2) {
+      } catch (parseError) {
+        console.error(parseError);
         setMessage('Backend response is not JSON. Check that backend is running on https://thevibecoders-soen341-project-w26.onrender.com.', false);
         return;
       }
     }
 
     if (!res.ok || !j.success) {
-      setMessage(j && j.error ? j.error : 'Failed to fetch recipes.', false);
+      setMessage(j?.error ?? 'Failed to fetch recipes.', false);
       return;
     }
 
