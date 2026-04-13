@@ -5,32 +5,25 @@
     <title>My Profile | MealMajor</title>
 
     <!-- Global Design System -->
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
 
     <!-- Page Specific Styles -->
-    <link rel="stylesheet" href="profile.css" />
+    <link rel="stylesheet" href="../css/profile.css" />
   </head>
-
-<img src="images/mealprep.png" alt="MealMajor Logo" class="logo"/>
-    </div>
-
   <body>
+    <img src="../../public/images/mealprep.png" alt="MealMajor Logo" class="logo" />
     <div id="loading">Loading profile...</div>
 
     <div id="notification" class="notification" style="display:none;"></div>
 
     <div id="profile">
-
-
       <div class="profile-main">
         <div class="top-bar">
-  <div class="top-bar">
-  <button class="button-secondary back-btn"
-          onclick="window.location.href='protected.html'">
-    ← Back
-  </button>
-</div>
-</div>
+          <button class="button-secondary back-btn"
+            onclick="window.location.href='protected.html'">
+            ← Back
+          </button>
+        </div>
         <h2>Welcome to your MealMajor 🌿 profile!</h2>
         <p class="subtitle">
           Here you can view and manage your profile information
@@ -159,13 +152,11 @@
       Unable to load profile
     </div>
 
-    <script src="profile.js"></script>
+    <script src="../js/profile.js"></script>
     <script>
   function goBack() {
     window.history.back();
   }
 </script>
-    </div>
-  </div>
   </body>
 </html>

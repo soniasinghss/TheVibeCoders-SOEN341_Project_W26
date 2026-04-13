@@ -4,7 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "lint:backend": "eslint \"src/**/*.js\" \"tests/**/*.js\"",
+    "lint:frontend": "eslint --no-eslintrc --config .eslintrc-frontend.cjs \"../frontend/js/**/*.js\"",
+    "lint:css": "stylelint \"../frontend/css/**/*.css\"",
+    "lint:css:fix": "npm run lint:css -- --fix",
+    "lint:html": "htmlhint \"../frontend/hmtl/**/*.html\"",
+    "lint": "npm run lint:backend && npm run lint:frontend && npm run lint:css && npm run lint:html",
+    "lint:fix": "npm run lint:backend -- --fix && npm run lint:frontend -- --fix && npm run lint:css:fix"
   },
   "jest": {
   "testEnvironment": "node",
@@ -21,8 +28,13 @@
     "mongoose": "^9.1.5"
   },
   "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-google": "^0.14.0",
+    "htmlhint": "^1.6.3",
     "jest": "^30.3.0",
     "mongodb-memory-server": "^11.0.1",
+    "stylelint": "^16.25.0",
+    "stylelint-config-standard": "^38.0.0",
     "supertest": "^7.2.2"
   }
 }

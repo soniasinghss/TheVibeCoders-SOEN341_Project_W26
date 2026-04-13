@@ -44,36 +44,40 @@ if (!token) {
   console.log('decoded token payload:', decoded);
 
   fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: {Authorization: `Bearer ${token}`},
   })
-    .then(async res => {
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = text; }
-      console.log('/users/me response', res.status, data);
-      if (!res.ok) throw new Error(data?.error || data || `Status ${res.status}`);
-      return data;
-    })
-    .then(user => {
-      currentUser = user;
-      if (document.getElementById('firstname')) document.getElementById('firstname').textContent = user.firstName || 'Not provided';
-      if (document.getElementById('lastname')) document.getElementById('lastname').textContent = user.lastName || 'Not provided';
-      if (document.getElementById('email')) document.getElementById('email').textContent = user.email || 'Not provided';
-      if (document.getElementById('firstNameInput')) document.getElementById('firstNameInput').value = user.firstName || '';
-      if (document.getElementById('lastNameInput')) document.getElementById('lastNameInput').value = user.lastName || '';
-      if (document.getElementById('dietPreferencesDisplay')) document.getElementById('dietPreferencesDisplay').textContent = user.dietPreferences || 'Not provided';
-      renderAllergyTags(user.allergies);
-      if (loadingEl) loadingEl.style.display = 'none';
-      if (profileEl) profileEl.style.display = 'block';
-      if (errorEl) errorEl.style.display = 'none';
-      setupEditMode();
-      setupNameEditMode();
-      setupAllergiesEditMode();
-    })
-    .catch(err => {
-      console.error('Profile error:', err);
-      showError(err.message || 'Network or server error');
-    });
+      .then(async (res) => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+        console.log('/users/me response', res.status, data);
+        if (!res.ok) throw new Error(data?.error || data || `Status ${res.status}`);
+        return data;
+      })
+      .then((user) => {
+        currentUser = user;
+        if (document.getElementById('firstname')) document.getElementById('firstname').textContent = user.firstName || 'Not provided';
+        if (document.getElementById('lastname')) document.getElementById('lastname').textContent = user.lastName || 'Not provided';
+        if (document.getElementById('email')) document.getElementById('email').textContent = user.email || 'Not provided';
+        if (document.getElementById('firstNameInput')) document.getElementById('firstNameInput').value = user.firstName || '';
+        if (document.getElementById('lastNameInput')) document.getElementById('lastNameInput').value = user.lastName || '';
+        if (document.getElementById('dietPreferencesDisplay')) document.getElementById('dietPreferencesDisplay').textContent = user.dietPreferences || 'Not provided';
+        renderAllergyTags(user.allergies);
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (profileEl) profileEl.style.display = 'block';
+        if (errorEl) errorEl.style.display = 'none';
+        setupEditMode();
+        setupNameEditMode();
+        setupAllergiesEditMode();
+      })
+      .catch((err) => {
+        console.error('Profile error:', err);
+        showError(err.message || 'Network or server error');
+      });
 }
 
 // Edit mode functionality
@@ -87,8 +91,8 @@ function setupEditMode() {
 
   // Initialize checkboxes based on current preferences
   if (currentUser.dietPreferences) {
-    const prefs = currentUser.dietPreferences.split(',').map(p => p.trim());
-    checkboxes.forEach(checkbox => {
+    const prefs = currentUser.dietPreferences.split(',').map((p) => p.trim());
+    checkboxes.forEach((checkbox) => {
       checkbox.checked = prefs.includes(checkbox.value);
     });
   }
@@ -107,15 +111,15 @@ function setupEditMode() {
     editBtn.style.display = 'inline-block';
     saveBtn.style.display = 'none';
     cancelBtn.style.display = 'none';
-    
+
     // Reset checkboxes
     if (currentUser.dietPreferences) {
-      const prefs = currentUser.dietPreferences.split(',').map(p => p.trim());
-      checkboxes.forEach(checkbox => {
+      const prefs = currentUser.dietPreferences.split(',').map((p) => p.trim());
+      checkboxes.forEach((checkbox) => {
         checkbox.checked = prefs.includes(checkbox.value);
       });
     } else {
-      checkboxes.forEach(checkbox => {
+      checkboxes.forEach((checkbox) => {
         checkbox.checked = false;
       });
     }
@@ -123,18 +127,18 @@ function setupEditMode() {
 
   saveBtn.addEventListener('click', async () => {
     const selectedPrefs = Array.from(checkboxes)
-      .filter(cb => cb.checked)
-      .map(cb => cb.value)
-      .join(', ');
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.value)
+        .join(', ');
 
     try {
       const res = await fetch('https://thevibecoders-soen341-project-w26.onrender.com/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ dietPreferences: selectedPrefs })
+        body: JSON.stringify({dietPreferences: selectedPrefs}),
       });
 
       const data = await res.json();
@@ -209,9 +213,9 @@ function setupNameEditMode() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ firstName: newFirstName, lastName: newLastName })
+        body: JSON.stringify({firstName: newFirstName, lastName: newLastName}),
       });
 
       const data = await res.json();
@@ -251,9 +255,9 @@ function renderAllergyTags(allergiesString) {
     return;
   }
 
-  const allergies = allergiesString.split(',').map(a => a.trim()).filter(a => a);
-  allergyTagsEl.innerHTML = allergies.map(allergy => 
-    `<span class="allergy-tag">${allergy}</span>`
+  const allergies = allergiesString.split(',').map((a) => a.trim()).filter((a) => a);
+  allergyTagsEl.innerHTML = allergies.map((allergy) =>
+    `<span class="allergy-tag">${allergy}</span>`,
   ).join('');
 }
 
@@ -262,19 +266,19 @@ function renderEditableAllergyTags(allergiesString) {
   const allergyTagsEditEl = document.getElementById('allergyTagsEdit');
   if (!allergyTagsEditEl) return;
 
-  const allergies = allergiesString ? 
-    allergiesString.split(',').map(a => a.trim()).filter(a => a) : 
+  const allergies = allergiesString ?
+    allergiesString.split(',').map((a) => a.trim()).filter((a) => a) :
     [];
 
-  allergyTagsEditEl.innerHTML = allergies.map(allergy => 
+  allergyTagsEditEl.innerHTML = allergies.map((allergy) =>
     `<span class="allergy-tag-edit">
       ${allergy}
       <button class="remove-allergyBtn" type="button" data-allergy="${allergy}">×</button>
-    </span>`
+    </span>`,
   ).join('');
 
   // Add remove handlers
-  document.querySelectorAll('.remove-allergyBtn').forEach(btn => {
+  document.querySelectorAll('.remove-allergyBtn').forEach((btn) => {
     btn.addEventListener('click', () => {
       btn.parentElement.remove();
     });
@@ -297,7 +301,7 @@ function setupAllergiesEditMode() {
     editAllergiesBtn.style.display = 'none';
     saveAllergiesBtn.style.display = 'inline-block';
     cancelAllergiesBtn.style.display = 'inline-block';
-    
+
     renderEditableAllergyTags(currentUser.allergies);
     allergyInput.value = '';
     allergyInput.focus();
@@ -315,28 +319,28 @@ function setupAllergiesEditMode() {
   addAllergyBtn.addEventListener('click', () => {
     const allergyValue = allergyInput.value.trim();
     const allergyErrorEl = document.getElementById('allergyError');
-    
+
     // Clear previous error
     allergyErrorEl.style.display = 'none';
     allergyErrorEl.textContent = '';
-    
+
     if (!allergyValue) {
       allergyErrorEl.textContent = 'Please enter an allergy';
       allergyErrorEl.style.display = 'block';
       return;
     }
-    
+
     // Check for duplicates (case-insensitive)
     const allergyTagsEditEl = document.getElementById('allergyTagsEdit');
     const existingTags = Array.from(allergyTagsEditEl.querySelectorAll('.allergy-tag-edit'))
-      .map(tag => tag.textContent.replace('×', '').trim().toLowerCase());
-    
+        .map((tag) => tag.textContent.replace('×', '').trim().toLowerCase());
+
     if (existingTags.includes(allergyValue.toLowerCase())) {
       allergyErrorEl.textContent = `"${allergyValue}" is already added`;
       allergyErrorEl.style.display = 'block';
       return;
     }
-    
+
     const newTag = document.createElement('span');
     newTag.className = 'allergy-tag-edit';
     newTag.innerHTML = `
@@ -344,11 +348,11 @@ function setupAllergiesEditMode() {
       <button class="remove-allergyBtn" type="button" data-allergy="${allergyValue}">×</button>
     `;
     allergyTagsEditEl.appendChild(newTag);
-    
+
     newTag.querySelector('.remove-allergyBtn').addEventListener('click', () => {
       newTag.remove();
     });
-    
+
     allergyInput.value = '';
     allergyInput.focus();
   });
@@ -364,7 +368,7 @@ function setupAllergiesEditMode() {
   saveAllergiesBtn.addEventListener('click', async () => {
     const allergyTagsEditEl = document.getElementById('allergyTagsEdit');
     const allergyTags = Array.from(allergyTagsEditEl.querySelectorAll('.allergy-tag-edit'))
-      .map(tag => tag.textContent.replace('×', '').trim());
+        .map((tag) => tag.textContent.replace('×', '').trim());
     const allergiesString = allergyTags.join(', ');
 
     try {
@@ -372,9 +376,9 @@ function setupAllergiesEditMode() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ allergies: allergiesString })
+        body: JSON.stringify({allergies: allergiesString}),
       });
 
       const data = await res.json();
@@ -394,14 +398,14 @@ function setupAllergiesEditMode() {
     }
   });
 }
-const logoutBtn = document.getElementById("logoutBtn");
+const logoutBtn = document.getElementById('logoutBtn');
 
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
+  logoutBtn.addEventListener('click', () => {
     // Clear auth data
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
 
     // Redirect to login page
-    window.location.href = "./login.html";
+    window.location.href = './login.html';
   });
 }
