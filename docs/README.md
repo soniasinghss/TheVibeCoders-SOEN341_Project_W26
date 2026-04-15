@@ -8,12 +8,12 @@ This project is part of a team assignment for Winter 2026 and is developed in fo
 
 ---
 ## Team Members
-- Sonia Singh, Frontend & Backend Developer
-- Eduardo Bermudez Temes, Backend Developer
-- Omar Eshatti, UI/UX
-- Xanthippe Pentovelis, Scrum Master
-- Hoai Kiet Tran, Tester
-- Hirushi Rathnayaka, Frontend Developer
+- Sonia Singh (soniasinghss), Frontend & Backend Developer
+- Eduardo Bermudez Temes (edu2219), Backend Developer
+- Omar Eshatti (owjsh-123), UI/UX
+- Xanthippe Pentovelis (XPent321), Scrum Master
+- Hoai Kiet Tran (Trankiet888), Tester
+- Hirushi Rathnayaka (hirurathnayaka77), Frontend Developer
 
 
 
